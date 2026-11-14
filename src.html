@@ -517,31 +517,31 @@ function coverArt(b){ const a = BOOK_ART[b]; const k = 'cover' + b; if (!artCach
 
 /* ================= content ================= */
 const BOOKS_EXTRA = {
-  1:{n:'முதல் பாகம்', line:'ஆடிப் பெருக்கு நாளில் வீரநாராயண ஏரிக்கரையில் தொடங்குகிறது ஒரு பயணம்.', blurb:'In the floods of the Tamil month of Aadi, a young warrior named Vandiyathevan rides south with a secret message for the Chola emperor, and stumbles into a conspiracy against the throne.'},
-  2:{n:'இரண்டாம் பாகம்', line:'கோடிக்கரையின் அலைகளும் ஈழத் தீவின் மர்மங்களும்.', blurb:'From the shores of Kodikkarai to the island of Lanka, Vandiyathevan crosses the sea in search of Prince Arulmozhivarman, guided by the boatwoman Poonguzhali.'},
-  3:{n:'மூன்றாம் பாகம்', line:'புயலுக்குப் பின் இருளில் கூர்மையாகும் சதி.', blurb:'A storm at sea, a prince missing, and a plot sharpening in the dark. The conspirators close in on the Chola family.'},
-  4:{n:'நான்காம் பாகம்', line:'சோழ மணிமகுடம் யாருக்கு?', blurb:'As rumours sweep through Thanjavur, the question of who will wear the Chola crown divides the court and the country.'},
-  5:{n:'ஐந்தாம் பாகம்', line:'தியாகத்தின் உச்சத்தில் நிறைவுறும் பெருங்கதை.', blurb:'Every thread of the story is drawn together in the final book, where loyalty, love and sacrifice decide the future of the empire.'}
+  1:{n:'முதல் பாகம்', line:'ஆடிப் பெருக்கு நாளில் வீரநாராயண ஏரிக்கரையில் தொடங்குகிறது ஒரு பயணம்.', blurb:'ஆடி மாதப் புது வெள்ளத்தின் நடுவே, சோழ சக்கரவர்த்திக்கு ஒரு இரகசியச் செய்தியுடன் தெற்கே குதிரையில் பயணிக்கிறான் இளம் வீரன் வந்தியத்தேவன். வழியில், அரியணைக்கு எதிரான ஒரு சதியின் நடுவே சிக்கிக் கொள்கிறான்.'},
+  2:{n:'இரண்டாம் பாகம்', line:'கோடிக்கரையின் அலைகளும் ஈழத் தீவின் மர்மங்களும்.', blurb:'கோடிக்கரையின் கடற்கரையிலிருந்து ஈழத் தீவு வரை, படகோட்டிப் பெண் பூங்குழலியின் துணையுடன், இளவரசர் அருள்மொழிவர்மனைத் தேடிக் கடல் கடக்கிறான் வந்தியத்தேவன்.'},
+  3:{n:'மூன்றாம் பாகம்', line:'புயலுக்குப் பின் இருளில் கூர்மையாகும் சதி.', blurb:'கடலில் ஒரு பெரும் புயல், காணாமல் போன ஓர் இளவரசர், இருளில் கூர்மையாகும் ஒரு சதி. சதிகாரர்கள் சோழ குடும்பத்தை நெருங்குகிறார்கள்.'},
+  4:{n:'நான்காம் பாகம்', line:'சோழ மணிமகுடம் யாருக்கு?', blurb:'தஞ்சை எங்கும் வதந்திகள் பரவுகின்றன. சோழ மணிமகுடத்தை யார் சூடுவது என்ற கேள்வி அரசவையையும் நாட்டையும் பிளவுபடுத்துகிறது.'},
+  5:{n:'ஐந்தாம் பாகம்', line:'தியாகத்தின் உச்சத்தில் நிறைவுறும் பெருங்கதை.', blurb:'கதையின் எல்லா இழைகளும் இந்த இறுதிப் பாகத்தில் ஒன்றிணைகின்றன. விசுவாசமும் காதலும் தியாகமும் பேரரசின் எதிர்காலத்தைத் தீர்மானிக்கின்றன.'}
 };
 const CAST = [
-  ['வந்தியத்தேவன்','Vandiyathevan','A witty, daring young warrior of the Vaanar clan, and the reader’s companion through the whole story.','#0d6b67'],
-  ['அருள்மொழிவர்மன்','Arulmozhivarman','The youngest Chola prince, loved by the people as Ponniyin Selvan, the son of the Kaveri.','#9c6a14'],
-  ['குந்தவை','Kundavai','The Chola princess at Pazhaiyarai: clear-sighted, learned and quietly powerful.','#7b3f6e'],
-  ['ஆதித்த கரிகாலன்','Aditha Karikalan','The crown prince, a fierce commander who holds the north from Kanchi.','#8a2f2f'],
-  ['சுந்தர சோழர்','Sundara Chozhar','The ailing emperor at Thanjavur, father of Aditha, Kundavai and Arulmozhi.','#5b4a8a'],
-  ['நந்தினி','Nandini','The enigmatic young wife of Periya Pazhuvettarayar, whose past shadows the court.','#3e2a52'],
-  ['பெரிய பழுவேட்டரையர்','Periya Pazhuvettarayar','Treasurer of the empire and a veteran of many battles, scarred and formidable.','#5c3b22'],
-  ['சின்ன பழுவேட்டரையர்','Chinna Pazhuvettarayar','His younger brother, commander of the Thanjavur fort and its guards.','#6b4a2a'],
-  ['ஆழ்வார்க்கடியான் நம்பி','Azhwarkkadiyan Nambi','A Vaishnavite devotee who turns up everywhere and knows more than he says.','#24607a'],
-  ['பூங்குழலி','Poonguzhali','The boatwoman of Kodikkarai, who rows alone and sings to the sea.','#1d5560'],
-  ['வானதி','Vanathi','A gentle princess of Kodumbalur and a companion of Kundavai.','#a3586a'],
-  ['செம்பியன் மாதேவி','Sembiyan Madevi','The devout queen mother, builder of stone temples.','#7a5a1e'],
-  ['மதுராந்தகன்','Madhuranthakan','Son of Sembiyan Madevi, whom some nobles favour for the throne.','#4b3a72'],
-  ['அநிருத்த பிரம்மராயர்','Aniruddha Brahmarayar','The emperor’s chief minister, patient and far-seeing.','#3f5a3a'],
-  ['சேந்தன் அமுதன்','Senthan Amudhan','A humble garland-maker of Thanjavur with a poet’s heart.','#2f6a4f'],
-  ['கந்தமாறன்','Kandamaran','Son of the Sambuvarayar of Kadambur and Vandiyathevan’s friend.','#6d2a2c'],
-  ['மணிமேகலை','Manimekalai','Kandamaran’s lively, warm-hearted sister.','#b0505e'],
-  ['பார்த்திபேந்திரன்','Parthibendran','A Pallava prince and Aditha Karikalan’s close companion.','#40507a']
+  ['வந்தியத்தேவன்','Vandiyathevan','வாணர் குலத்து இளம் வீரன். நகைச்சுவையும் துணிச்சலும் மிக்கவன்; கதை முழுவதும் வாசகரின் துணைவன்.','#0d6b67'],
+  ['அருள்மொழிவர்மன்','Arulmozhivarman','சோழ குலத்தின் இளைய இளவரசர். மக்களின் அன்புக்குரிய ‘பொன்னியின் செல்வன்’, காவேரி மைந்தன்.','#9c6a14'],
+  ['குந்தவை','Kundavai','பழையாறையில் வாழும் சோழ இளவரசி. கூர்மையான அறிவும் அமைதியான ஆற்றலும் கொண்டவள்.','#7b3f6e'],
+  ['ஆதித்த கரிகாலன்','Aditha Karikalan','பட்டத்து இளவரசர். காஞ்சியிலிருந்து வடதிசையைக் காக்கும் வீரமிக்க படைத்தலைவர்.','#8a2f2f'],
+  ['சுந்தர சோழர்','Sundara Chozhar','தஞ்சையில் நோய்வாய்ப்பட்டிருக்கும் சக்கரவர்த்தி. ஆதித்தர், குந்தவை, அருள்மொழி ஆகியோரின் தந்தை.','#5b4a8a'],
+  ['நந்தினி','Nandini','பெரிய பழுவேட்டரையரின் இளம் மனைவி. அவளுடைய கடந்த காலம் அரண்மனையின் மேல் நிழலாகப் படர்கிறது.','#3e2a52'],
+  ['பெரிய பழுவேட்டரையர்','Periya Pazhuvettarayar','பேரரசின் தனாதிகாரி. பல போர்களில் வெற்றி கண்ட, உடலெங்கும் விழுப்புண் தாங்கிய வீரர்.','#5c3b22'],
+  ['சின்ன பழுவேட்டரையர்','Chinna Pazhuvettarayar','அவருடைய இளைய சகோதரர்; தஞ்சைக் கோட்டையின் தளபதி.','#6b4a2a'],
+  ['ஆழ்வார்க்கடியான் நம்பி','Azhwarkkadiyan Nambi','எங்கும் தோன்றும் வீர வைஷ்ணவர். சொல்வதைவிட அதிகம் அறிந்தவர்.','#24607a'],
+  ['பூங்குழலி','Poonguzhali','கோடிக்கரையின் படகோட்டிப் பெண். தனியே படகு செலுத்தி, கடலைப் பார்த்துப் பாடுபவள்.','#1d5560'],
+  ['வானதி','Vanathi','கொடும்பாளூர் இளவரசி. மென்மையானவள்; குந்தவையின் தோழி.','#a3586a'],
+  ['செம்பியன் மாதேவி','Sembiyan Madevi','கற்கோயில்கள் எழுப்பிய, இறைபக்தி மிக்க மூத்த அரசி.','#7a5a1e'],
+  ['மதுராந்தகன்','Madhuranthakan','செம்பியன் மாதேவியின் மகன். சில சிற்றரசர்கள் இவரையே அரியணைக்கு விரும்புகிறார்கள்.','#4b3a72'],
+  ['அநிருத்த பிரம்மராயர்','Aniruddha Brahmarayar','சக்கரவர்த்தியின் முதல் அமைச்சர். பொறுமையும் தொலைநோக்கும் உடையவர்.','#3f5a3a'],
+  ['சேந்தன் அமுதன்','Senthan Amudhan','தஞ்சையில் பூமாலை தொடுக்கும் எளிய இளைஞன்; கவிஞனின் உள்ளம் கொண்டவன்.','#2f6a4f'],
+  ['கந்தமாறன்','Kandamaran','கடம்பூர் சம்புவரையரின் மகன்; வந்தியத்தேவனின் நண்பன்.','#6d2a2c'],
+  ['மணிமேகலை','Manimekalai','கந்தமாறனின் தங்கை. கலகலப்பும் அன்பும் நிறைந்தவள்.','#b0505e'],
+  ['பார்த்திபேந்திரன்','Parthibendran','பல்லவ இளவரசன்; ஆதித்த கரிகாலனின் நெருங்கிய தோழன்.','#40507a']
 ];
 const firstGrapheme = s => { try { const seg = new Intl.Segmenter('ta', {granularity:'grapheme'}); const it = seg.segment(s)[Symbol.iterator]().next(); return it.value ? it.value.segment : s[0]; } catch { return s.slice(0, 2); } };
 
@@ -686,7 +686,7 @@ function renderHome(anchor){
       <div class="eyebrow" style="color:#4a2f3a">கல்கி இதழில் தொடராக வெளிவந்தது<span class="latin" style="display:block;margin-top:4px;text-transform:none;letter-spacing:.02em;font-weight:400">Serialised weekly in Kalki magazine, 1950–1954</span></div>
       <h1>பொன்னியின் செல்வன்</h1>
       <div class="by">கல்கி கிருஷ்ணமூர்த்தி<span class="latin">Kalki R. Krishnamurthy</span></div>
-      <p class="lede">The great Tamil historical novel of the Chola empire, complete in five books: ${total} chapters, about ${hours} hours of reading, set in calm type with original illustrations for every chapter.</p>
+      <p class="lede">சோழப் பேரரசின் பெருமையைச் சொல்லும் தமிழின் தலைசிறந்த வரலாற்றுப் புதினம், ஐந்து பாகங்களிலும் முழுமையாக: ${total} அத்தியாயங்கள், ஏறக்குறைய ${hours} மணி நேர வாசிப்பு. ஒவ்வொரு அத்தியாயத்துக்கும் தனிச் சித்திரத்துடன், கண்ணுக்கு இதமான எழுத்தில்.</p>
       <div class="actions">${L ? `<a class="btn btn-primary" href="#read-${L.b}-${L.n}">தொடர்ந்து படிக்க</a>` : `<a class="btn btn-primary" href="#read-1-1">படிக்கத் தொடங்கு · Start reading</a>`}<a class="btn btn-ghost" href="#book-1">முதல் பாகம்</a></div>
     </div></section>
   ${resume ? `<section class="wrap" style="padding-top:8px">${resume}</section>` : ''}
@@ -696,13 +696,13 @@ function renderHome(anchor){
       <a class="book-card" href="#book-${bk.id}">
         <div class="cover">${coverArt(bk.id)}<div class="rule"><span>Kalki</span><span>${['I','II','III','IV','V'][bk.id-1]}</span></div>
           <div class="ct"><div class="no">${BOOKS_EXTRA[bk.id].n}</div><div class="ta">${esc(bk.ta)}</div><div class="en">${esc(bk.en)}</div></div></div>
-        <div class="under"><span>${bk.chapters.length} அத்தியாயங்கள்</span>${pct ? `<div class="meter" title="${Math.round(pct*100)}% read"><i style="width:${Math.round(pct*100)}%"></i></div>` : `<span>${Math.round(bk.chapters.reduce((x,c)=>x+c.min,0)/60)} மணி</span>`}</div>
+        <div class="under"><span>${bk.chapters.length} அத்தியாயங்கள்</span>${pct ? `<div class="meter" title="${Math.round(pct*100)}% படித்தது"><i style="width:${Math.round(pct*100)}%"></i></div>` : `<span>${Math.round(bk.chapters.reduce((x,c)=>x+c.min,0)/60)} மணி</span>`}</div>
       </a>`; }).join('')}</div>
   </section>
   <section class="block wrap" id="find">
     <div class="sec-head"><h2>அத்தியாயம் தேடு<span class="latin">Find a chapter</span></h2>
       <div class="search-box"><label class="search"><span class="sr" hidden>Search chapter titles</span>${ICON.search}<input id="q" type="search" placeholder="nandini → நந்தினி · அல்லது 2.14" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" lang="ta"></label>
-      <div class="ta-hint" id="taHint">ஆங்கில எழுத்துகளில் தட்டச்சு செய்தால் தமிழாக மாறும் · Type Tamil in English letters (Space converts). A Tamil keyboard works too.</div></div></div>
+      <div class="ta-hint" id="taHint">ஆங்கில எழுத்துகளில் தட்டச்சு செய்தால் தமிழாக மாறும் (Space அழுத்தினால் மாற்றம்). தமிழ் விசைப்பலகையும் பயன்படுத்தலாம்.</div></div></div>
     <div class="results" id="results"></div>
   </section>
   <section class="block wrap" id="characters">
@@ -713,16 +713,16 @@ function renderHome(anchor){
   <section class="block wrap" id="about">
     <div class="sec-head"><h2>இந்தப் பதிப்பு பற்றி<span class="latin">About this edition</span></h2></div>
     <div class="about"><div>
-      <p>Ponniyin Selvan was serialised by Kalki R. Krishnamurthy in the weekly <i>Kalki</i> from 1950 to 1954. The Government of Tamil Nadu nationalised Kalki’s works, so the novel is free to read and share.</p>
-      <p>The Tamil text here comes from the public-domain digital editions published by Project Madurai and Chennai Library, gathered from open text collections on GitHub. Spelling follows those editions. A few chapters at the end of the first book were reassembled from a second copy of the text, so their paragraph breaks may differ slightly from print.</p>
-      <p>The illustrations are original to this reader. Each one is drawn in code from the setting of its chapter (river, sea, temple, palace, forest or town) and the time of day, in a palette that belongs to its book.</p>
-    </div><div class="kbd"><b style="font-family:var(--f-display)">விசைப்பலகை · Keyboard</b>
-      <div><span>Previous / next chapter</span><span><kbd>←</kbd> <kbd>→</kbd></span></div>
-      <div><span>Chapters list</span><kbd>T</kbd></div><div><span>Reading settings</span><kbd>A</kbd></div>
-      <div><span>Bookmark this place</span><kbd>B</kbd></div><div><span>Close a panel</span><kbd>Esc</kbd></div>
+      <p>பொன்னியின் செல்வன் 1950 முதல் 1954 வரை <i>கல்கி</i> வார இதழில் தொடராக வெளிவந்தது. கல்கியின் படைப்புகளைத் தமிழ்நாடு அரசு நாட்டுடைமையாக்கியதால், இந்நூலை யாரும் தடையின்றிப் படிக்கலாம், பகிரலாம்.</p>
+      <p>இங்குள்ள தமிழ் உரை, மதுரைத் திட்டம் (Project Madurai), சென்னை நூலகம் (Chennai Library) வெளியிட்ட பொதுக்கள மின்பதிப்புகளிலிருந்து, GitHub-இல் உள்ள திறந்த உரைத் தொகுப்புகள் வழியாகப் பெறப்பட்டது. எழுத்துக்கூட்டல் அப்பதிப்புகளைப் பின்பற்றுகிறது. முதல் பாகத்தின் இறுதி அத்தியாயங்கள் சில வேறொரு படியிலிருந்து சேர்க்கப்பட்டதால், அவற்றின் பத்திப் பிரிவுகள் அச்சுப் பதிப்பிலிருந்து சற்று மாறுபடலாம்.</p>
+      <p>இதிலுள்ள சித்திரங்கள் இந்த வாசிப்புத் தளத்துக்கென்றே உருவாக்கப்பட்டவை. ஒவ்வொன்றும் அந்த அத்தியாயத்தின் களத்தையும் (ஆறு, கடல், கோயில், அரண்மனை, காடு, நகரம்) பொழுதையும் கொண்டு, அந்தப் பாகத்துக்குரிய வண்ணங்களில் நிரலால் வரையப்பட்டவை.</p>
+    </div><div class="kbd"><b style="font-family:var(--f-display)">விசைப்பலகைக் குறுக்குவழிகள்</b>
+      <div><span>முந்தைய / அடுத்த அத்தியாயம்</span><span><kbd>←</kbd> <kbd>→</kbd></span></div>
+      <div><span>அத்தியாயப் பட்டியல்</span><kbd>T</kbd></div><div><span>வாசிப்பு அமைப்புகள்</span><kbd>A</kbd></div>
+      <div><span>இந்த இடத்தைக் குறித்து வை</span><kbd>B</kbd></div><div><span>சாளரத்தை மூடு</span><kbd>Esc</kbd></div>
     </div></div>
   </section>
-  <footer class="foot wrap">பொன்னியின் செல்வன் · கல்கி. Your reading place, finished chapters and bookmarks are saved in this browser only.</footer>
+  <footer class="foot wrap">பொன்னியின் செல்வன் · கல்கி. நீங்கள் படித்த இடம், முடித்த அத்தியாயங்கள், புத்தகக்குறிகள் இந்த உலாவியில் மட்டுமே சேமிக்கப்படும்.</footer>
   </main>`;
   const q = $('#q'), res = $('#results');
   const all = M.books.flatMap(bk => bk.chapters.map(c => ({b:bk.id, c, key:roman(taToLatin(c.title))})));
@@ -739,7 +739,7 @@ function renderHome(anchor){
       const ta = v.replace(/[a-z]+/gi, w => tanglish(w)).trim(), key = roman(v.replace(/[஀-௿]+/g, w => taToLatin(w)));
       hits = all.filter(x => x.c.title.includes(v) || (ta && x.c.title.includes(ta)) || (key.length > 1 && x.key.includes(key)) || String(x.c.n) === v);
     }
-    res.innerHTML = hits.length ? hits.slice(0, 30).map(x => `<a href="#read-${x.b}-${x.c.n}"><span class="tag">${x.b}.${x.c.n}</span><b>${esc(x.c.title)}</b><span class="tag">${esc(book(x.b).ta)}</span></a>`).join('') : `<div class="empty">“${esc(latin ? tanglish(v) : v)}” என்ற தலைப்பில் அத்தியாயம் இல்லை. Try a shorter word, or a number such as 3.12.</div>`;
+    res.innerHTML = hits.length ? hits.slice(0, 30).map(x => `<a href="#read-${x.b}-${x.c.n}"><span class="tag">${x.b}.${x.c.n}</span><b>${esc(x.c.title)}</b><span class="tag">${esc(book(x.b).ta)}</span></a>`).join('') : `<div class="empty">“${esc(latin ? tanglish(v) : v)}” என்ற தலைப்பில் அத்தியாயம் இல்லை. சிறிய சொல்லையோ 3.12 போன்ற எண்ணையோ முயலுங்கள்.</div>`;
   };
   // Convert the finished English-letter word into Tamil when the reader types a space or presses Enter.
   const commit = () => { const before = q.value; const after = before.replace(/[a-z]+(?=\s*$)/i, w => tanglish(w)); if (after !== before){ q.value = after; } };
@@ -768,7 +768,7 @@ function renderBook(b){
         <h1>${esc(bk.ta)}</h1><div class="sub">${esc(bk.en)}</div>
         <p class="tline">${esc(X.line)}</p>
         <p class="blurb">${esc(X.blurb)}</p>
-        <div class="stats"><span><b>${bk.chapters.length}</b> அத்தியாயங்கள்</span><span><b>${hrs.toFixed(1)}</b> hours</span><span><b>${Math.round(bookPct(b)*100)}%</b> read</span></div>
+        <div class="stats"><span><b>${bk.chapters.length}</b> அத்தியாயங்கள்</span><span><b>${hrs.toFixed(1)}</b> மணி நேரம்</span><span><b>${Math.round(bookPct(b)*100)}%</b> படித்தது</span></div>
         <a class="btn btn-primary" href="#read-${b}-${lastHere || 1}">${lastHere ? `தொடர்க · அத்தியாயம் ${lastHere}` : 'படிக்கத் தொடங்கு · Start'}</a>
       </div></div></section>
   <section class="wrap"><div class="sec-head" style="margin-top:22px"><h2>அத்தியாயங்கள்<span class="latin">Chapters</span></h2></div>
@@ -822,7 +822,7 @@ async function renderReader(b, n){
   wireReaderChrome(b, n);
   let data;
   try { data = await loadChapter(b, n); }
-  catch { $('#prose').innerHTML = `<p class="empty">இந்த அத்தியாயத்தை ஏற்ற முடியவில்லை. Check your connection, then <a href="#read-${b}-${n}" onclick="location.reload()">try again</a>.</p>`; return; }
+  catch { $('#prose').innerHTML = `<p class="empty">இந்த அத்தியாயத்தை ஏற்ற முடியவில்லை. இணைய இணைப்பைச் சரிபார்த்து, <a href="#read-${b}-${n}" onclick="location.reload()">மீண்டும் முயலுங்கள்</a>.</p>`; return; }
   if (parse().v !== 'read' || parse().b !== b || parse().n !== n) return;
   const html = data.paras.map((p, i) => {
     if (i === 0){ const g = firstGrapheme(p); if (/[஀-௿]/.test(g)) return `<p data-i="0"><span class="dropcap" aria-hidden="true">${esc(g)}</span><span class="sr-only" hidden>${esc(g)}</span>${esc(p.slice(g.length))}</p>`; }
@@ -834,7 +834,7 @@ async function renderReader(b, n){
   const nxt = n < bk.chapters.length ? {b, c:bk.chapters[n]} : (b < 5 ? {b:b+1, c:book(b+1).chapters[0]} : null);
   const prv = n > 1 ? {b, c:bk.chapters[n-2]} : (b > 1 ? {b:b-1, c:book(b-1).chapters.at(-1)} : null);
   $('#endcard').innerHTML = `<div class="orn">${ORN}</div>` + (nxt ? `<a class="next" href="#read-${nxt.b}-${nxt.c.n}"><div class="na">${chapterArt(nxt.b, nxt.c, {lite:1, w:1050, h:400})}</div><div class="nb"><small>${nxt.b !== b ? 'அடுத்த பாகம் · ' + esc(book(nxt.b).ta) : 'அடுத்த அத்தியாயம் · Next'}</small><b>${nxt.c.n}. ${esc(nxt.c.title)}</b><span style="color:var(--r-muted);font-size:.88rem">${nxt.c.min} நிமிடம்</span></div></a>`
-    : `<div class="next" style="padding:22px;text-align:center"><b style="font-family:var(--f-display);font-size:1.5rem">நிறைவு</b><p style="color:var(--r-muted);margin:.4em 0 0">You have reached the end of Ponniyin Selvan.</p></div>`)
+    : `<div class="next" style="padding:22px;text-align:center"><b style="font-family:var(--f-display);font-size:1.5rem">நிறைவு</b><p style="color:var(--r-muted);margin:.4em 0 0">பொன்னியின் செல்வன் முற்றும்.</p></div>`)
     + `<div class="pager">${prv ? `<a href="#read-${prv.b}-${prv.c.n}">← ${esc(prv.c.title)}</a>` : '<span></span>'}<a href="#book-${b}">${esc(bk.ta)} · அத்தியாயங்கள்</a></div>`;
   // resume position
   const jump = store.get('jump', null); store.set('jump', null);
@@ -946,6 +946,6 @@ addEventListener('keydown', e => {
   else if (e.key === 'a' || e.key === 'A') openPanel === 'settings' ? closePanels() : open('settings');
   else if (e.key === 'b' || e.key === 'B') toggleBookmark(r.b, r.n);
 });
-route().catch(err => { app.innerHTML = `<div class="loading">The library could not load (${esc(err && err.message || err)}). Reload the page to try again.</div>`; console.error(err); });
+route().catch(err => { app.innerHTML = `<div class="loading">நூலகத்தை ஏற்ற முடியவில்லை (${esc(err && err.message || err)}). பக்கத்தை மீண்டும் ஏற்றிப் பாருங்கள்.</div>`; console.error(err); });
 })();
 </script>
