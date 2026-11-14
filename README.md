@@ -12,6 +12,6 @@ Static web app (one `index.html` + `data/`), no build step. Live on Vercel; ever
 - Illustrations are drawn in code (SVG) inside index.html; no image files.
 
 ## Editing
-Edit `src.html`, then run `python3 tools/bundle.py .` to produce `index.html`. The bundle embeds the manifest and
+Edit `src.html`, then run `python3 tools/bundle.py . index.html --standalone` to produce the deployable `index.html` (a full HTML document with the mobile viewport tag). Without `--standalone` it writes the fragment used for the Claude artifact preview. The bundle embeds the manifest and
 each book's text (gzip + base64, decoded in the browser with DecompressionStream), because the Claude artifact viewer
 did not let the page fetch the separate `data/` files. `data/` remains as a fallback for old browsers.
