@@ -1,0 +1,950 @@
+<title>Ponniyin Selvan Reader</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Read Kalki's Ponniyin Selvan, all five books, in a calm, beautiful Tamil reader.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wdth,wght@62.5..100,300..900&family=Catamaran:wght@400;500;600;700;800&family=Mukta+Malar:wght@400;500;700&family=Marcellus&display=swap">
+<style>
+/* Layout: a quiet library shell (shelf -> book -> chapter) around one long, centred reading column; art bleeds full-width above each chapter. */
+:root{
+  --bg:#efeee8; --surface:#faf9f5; --surface-2:#e5e3da; --ink:#1c1a21; --muted:#67626d; --line:#d6d3c9;
+  --accent:#0d6b67; --accent-ink:#ffffff; --gold:#9c6a14; --shadow:0 1px 2px rgba(28,26,33,.06),0 8px 28px rgba(28,26,33,.10);
+  --r-bg:var(--surface); --r-ink:#22201c; --r-muted:#6e6860; --r-line:#dcd8cd; --r-accent:var(--accent);
+  --f-display:"Noto Serif Tamil","Latha","Tamil Sangam MN",serif;
+  --f-read:"Noto Serif Tamil","Latha","Tamil Sangam MN",serif;
+  --f-ui:"Catamaran","Mukta Malar","Latha",system-ui,sans-serif;
+  --f-latin:"Marcellus","Palatino Linotype",Georgia,serif;
+  --rsize:20px; --rlh:1.95; --rwidth:36em;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111219; --surface:#191b24; --surface-2:#232633; --ink:#ebe5d7; --muted:#9e98a8; --line:#2d303d;
+  --accent:#5cc4b9; --accent-ink:#06201e; --gold:#e2b45e; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  --r-ink:#d9d2c3; --r-muted:#948e9c; --r-line:#2d303d; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#111219; --surface:#191b24; --surface-2:#232633; --ink:#ebe5d7; --muted:#9e98a8; --line:#2d303d;
+  --accent:#5cc4b9; --accent-ink:#06201e; --gold:#e2b45e; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  --r-ink:#d9d2c3; --r-muted:#948e9c; --r-line:#2d303d; color-scheme:dark;}
+/* Reader paper themes, chosen in the reading settings. They override only the reading tokens. */
+body[data-paper="day"]{--r-bg:#fdfcf8;--r-ink:#1f1d1a;--r-muted:#6f6a61;--r-line:#e3dfd4;--r-accent:#0d6b67}
+body[data-paper="olai"]{--r-bg:#ecdfbd;--r-ink:#3a2a17;--r-muted:#7a6343;--r-line:#d6c59b;--r-accent:#7d4b10}
+body[data-paper="night"]{--r-bg:#0e0f13;--r-ink:#c9c2b2;--r-muted:#7f7a72;--r-line:#25262c;--r-accent:#d6a957}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.5;min-height:100vh}
+body.reading{background:var(--r-bg)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
+body.reading::before{background:var(--r-bg)}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.latin{font-family:var(--f-latin);letter-spacing:.02em}
+.eyebrow{font-family:var(--f-ui);font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:.5em;border:1px solid transparent;border-radius:999px;padding:.62em 1.2em;font-weight:700;cursor:pointer;text-decoration:none;font-size:.98rem;transition:transform .15s ease,background .2s}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--accent);color:var(--accent-ink)}
+.btn-ghost{border-color:var(--line);background:transparent}
+.btn-ghost:hover{background:var(--surface-2)}
+.icon-btn{width:42px;height:42px;display:inline-grid;place-items:center;border-radius:999px;border:0;background:transparent;cursor:pointer;color:inherit;flex:none}
+.icon-btn:hover{background:color-mix(in srgb,currentColor 9%,transparent)}
+.icon-btn svg{width:22px;height:22px}
+svg.art{display:block;width:100%;height:100%}
+
+/* ---------- top bar (library) ---------- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent)}
+.topbar .wrap{display:flex;align-items:center;gap:12px;height:60px}
+.brand{display:flex;align-items:baseline;gap:10px;text-decoration:none;min-width:0}
+.brand b{font-family:var(--f-display);font-weight:800;font-variation-settings:"wdth" 80;font-size:1.25rem;white-space:nowrap}
+.brand span{font-size:.8rem;color:var(--muted);white-space:nowrap}
+.topbar nav{margin-left:auto;display:flex;gap:4px;align-items:center;flex:none}
+.topbar nav a{text-decoration:none;font-weight:600;padding:.4em .8em;border-radius:999px;color:var(--muted);font-size:.95rem}
+.topbar nav a:hover,.topbar nav a[aria-current="page"]{color:var(--ink);background:var(--surface-2)}
+@media (max-width:560px){.resume{grid-template-columns:auto 1fr}.resume .btn{display:none}.resume .meta small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand span{display:none}.brand b{font-size:.92rem}.topbar nav a{padding:.3em .5em;font-size:.8rem}.topbar .wrap{gap:6px}.topbar nav a.opt{display:none}}
+@media (max-width:340px){.topbar nav{display:none}}
+
+/* ---------- home ---------- */
+.hero{position:relative;overflow:hidden;isolation:isolate}
+.hero-art{position:absolute;inset:0;z-index:-1}
+.hero-art::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(252,236,206,.82) 0,rgba(252,236,206,.55) 42%,transparent 70%),linear-gradient(180deg,transparent 70%,var(--bg) 100%)}
+@media (max-width:700px){.hero-art::after{background:linear-gradient(180deg,rgba(252,236,206,.35),rgba(252,236,206,.75) 50%,var(--bg) 100%)}}
+.hero .wrap{padding-block:clamp(56px,10vw,120px) 40px;display:grid;gap:18px}
+.hero h1{margin:0;font-family:var(--f-display);font-weight:900;font-variation-settings:"wdth" 70;font-size:clamp(2.9rem,9vw,6.6rem);line-height:1.02;letter-spacing:-.01em;color:#1a1020;text-wrap:balance;text-shadow:0 1px 0 rgba(255,240,210,.5)}
+.hero .by{font-family:var(--f-display);font-size:clamp(1.1rem,2.4vw,1.5rem);color:#3d2533;font-weight:600}
+.hero .by .latin{font-size:.85em;color:#5a3b45;margin-left:.4em}
+.hero p.lede{max-width:34em;margin:0;font-size:1.08rem;color:#3a2a33}
+.hero .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.hero .btn-ghost{border-color:rgba(40,20,30,.25);color:#2a1a24;background:rgba(255,248,235,.35)}
+
+.resume{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:var(--shadow);text-decoration:none;max-width:720px}
+.resume .thumb{width:96px;aspect-ratio:16/10;border-radius:10px;overflow:hidden;max-width:100%}
+.resume .meta{min-width:0}
+.resume .meta b{display:block;font-family:var(--f-display);font-size:1.12rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.resume .meta small{color:var(--muted)}
+.meter{height:4px;border-radius:4px;background:var(--surface-2);overflow:hidden;margin-top:6px}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:4px}
+
+section.block{padding-block:40px;scroll-margin-top:60px}
+.sec-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+.sec-head h2{margin:0;font-family:var(--f-display);font-weight:800;font-variation-settings:"wdth" 78;font-size:clamp(1.6rem,3.4vw,2.2rem);line-height:1.15}
+.sec-head h2 .latin{display:block;font-size:.5em;font-weight:400;color:var(--muted);margin-top:2px}
+
+.shelf{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(12px,2vw,26px)}
+@media (max-width:980px){.shelf{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:620px){.shelf{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:46%;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 2px 14px;margin:-6px -2px 0;scrollbar-width:none}.shelf::-webkit-scrollbar{display:none}.book-card{scroll-snap-align:start}.book-card .under{flex-direction:column;gap:2px;font-size:.8rem}.book-card .under .meter{width:100%}}
+.book-card{text-decoration:none;display:grid;gap:10px;min-width:0}
+.cover{position:relative;aspect-ratio:2/3;border-radius:6px 14px 14px 6px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.15),0 16px 34px rgba(30,15,25,.25);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s;max-width:100%;isolation:isolate}
+.cover::before{content:"";position:absolute;inset:0 auto 0 0;width:10px;background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(255,255,255,.12) 60%,transparent);z-index:2}
+.book-card:hover .cover{transform:translateY(-6px) rotate(-.6deg);box-shadow:0 4px 8px rgba(0,0,0,.15),0 26px 50px rgba(30,15,25,.32)}
+.cover .ct{position:absolute;inset:auto 0 0 0;padding:14% 10% 10%;z-index:1;color:#fff8ea;background:linear-gradient(180deg,transparent,rgba(10,5,10,.55) 45%,rgba(10,5,10,.78))}
+.cover .ct .no{font-family:var(--f-ui);font-size:clamp(.62rem,1.1vw,.78rem);letter-spacing:.16em;text-transform:uppercase;font-weight:700;opacity:.85}
+.cover .ct .ta{font-family:var(--f-display);font-weight:900;font-variation-settings:"wdth" 64;font-size:clamp(1.1rem,2.1vw,1.7rem);line-height:1.1;margin-top:4px;text-wrap:balance}
+.cover .ct .en{font-family:var(--f-latin);font-size:clamp(.7rem,1.2vw,.9rem);opacity:.85;margin-top:4px}
+.cover .rule{position:absolute;inset:6% 7% auto;display:flex;justify-content:space-between;z-index:1;font-family:var(--f-latin);color:rgba(255,246,225,.85);font-size:clamp(.55rem,1vw,.72rem);letter-spacing:.2em;text-transform:uppercase;text-shadow:0 1px 3px rgba(40,15,20,.6)}
+.book-card .under{display:flex;justify-content:space-between;gap:8px;font-size:.86rem;color:var(--muted)}
+.book-card .under .meter{flex:1;align-self:center;margin:0}
+
+.search{position:relative;max-width:420px;width:100%}
+.search input{width:100%;font:inherit;font-size:1rem;padding:.7em 1em .7em 2.6em;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.search svg{position:absolute;left:.9em;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--muted)}
+.search-box{display:grid;gap:8px;max-width:420px;width:100%}
+.ta-hint{font-size:.8rem;color:var(--muted);line-height:1.4;padding:0 .4em}
+.ta-hint b{font-family:var(--f-display);color:var(--accent);font-size:1rem;font-weight:700}
+.results{display:grid;gap:2px;margin-top:14px}
+.results a{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:.6em .8em;border-radius:10px;text-decoration:none}
+.results a:hover{background:var(--surface-2)}
+.results .tag{font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.results b{font-family:var(--f-display);font-weight:600}
+
+.cast{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.person{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;padding:16px;border-radius:16px;background:var(--surface);border:1px solid var(--line);min-width:0}
+.seal{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:1.45rem;color:#fff6e4;position:relative;flex:none}
+.seal::after{content:"";position:absolute;inset:3px;border-radius:50%;border:1px dashed rgba(255,240,210,.55)}
+.person h3{margin:0;font-family:var(--f-display);font-size:1.08rem;font-weight:700;line-height:1.3}
+.person .en{font-size:.82rem;color:var(--muted);font-family:var(--f-latin)}
+.person p{margin:.35em 0 0;font-size:.92rem;color:var(--ink);opacity:.86;line-height:1.5}
+
+.about{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:start}
+@media (max-width:760px){.about{grid-template-columns:1fr}}
+.about p{margin:0 0 .9em;max-width:62ch;color:var(--ink);opacity:.9}
+.kbd{display:grid;gap:8px;font-size:.92rem;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
+.kbd div{display:flex;justify-content:space-between;gap:10px}
+kbd{font-family:var(--f-ui);font-size:.8rem;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:.05em .5em;background:var(--bg)}
+footer.foot{padding-block:36px 56px;color:var(--muted);font-size:.86rem;border-top:1px solid var(--line);margin-top:24px}
+
+/* ---------- book page ---------- */
+.book-hero{position:relative;isolation:isolate;overflow:hidden}
+.book-hero .bg{position:absolute;inset:0;z-index:-1;filter:saturate(1.1)}
+.book-hero .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 25%,transparent),var(--bg) 92%)}
+.book-hero .wrap{display:grid;grid-template-columns:minmax(180px,280px) 1fr;gap:clamp(20px,4vw,52px);padding-block:44px 30px;align-items:end}
+@media (max-width:680px){.book-hero .wrap{grid-template-columns:1fr;justify-items:start}.book-hero .cover{width:min(58vw,240px)}}
+.book-hero h1{margin:.1em 0 .1em;font-family:var(--f-display);font-weight:900;font-variation-settings:"wdth" 72;font-size:clamp(2.4rem,6vw,4.2rem);line-height:1.05;text-wrap:balance}
+.book-hero .sub{font-family:var(--f-latin);font-size:1.15rem;color:var(--muted)}
+.book-hero .blurb{max-width:40em;font-size:1.05rem;margin:.9em 0 0}
+.book-hero .tline{font-family:var(--f-display);font-size:1.05rem;margin:.6em 0 0;color:var(--gold);font-weight:600}
+.stats{display:flex;flex-wrap:wrap;gap:8px 22px;margin:18px 0;color:var(--muted);font-size:.92rem}
+.stats b{color:var(--ink);font-variant-numeric:tabular-nums}
+.book-nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.book-nav a{text-decoration:none;font-size:.86rem;padding:.3em .8em;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.book-nav a[aria-current="page"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:4px 18px;padding-bottom:30px}
+.toc a{display:grid;grid-template-columns:3.2em 72px 1fr;gap:12px;align-items:center;padding:8px 10px;border-radius:12px;text-decoration:none;min-width:0}
+.toc a:hover{background:var(--surface)}
+.toc .n{font-family:var(--f-latin);font-size:1.3rem;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.toc .sw{width:72px;aspect-ratio:16/10;border-radius:8px;overflow:hidden;max-width:100%}
+.toc .t{min-width:0}
+.toc .t b{display:block;font-family:var(--f-display);font-weight:600;font-size:1.02rem;line-height:1.35;overflow-wrap:anywhere}
+.toc .t small{color:var(--muted);font-size:.8rem}
+.toc a.done .n{color:var(--accent)}
+.toc a.done .n::after{content:" ✓";font-size:.7em}
+.toc a.current{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+
+/* ---------- reader ---------- */
+.rbar{position:fixed;left:0;right:0;top:0;z-index:50;padding-top:env(safe-area-inset-top,0px);padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px));background:color-mix(in srgb,var(--r-bg) 90%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:var(--r-ink);border-bottom:1px solid var(--r-line);transition:transform .3s ease}
+.rbar.hide{transform:translateY(-110%)}
+.rbar .in{height:56px;display:flex;align-items:center;gap:4px;max-width:1180px;margin:0 auto}
+.rbar .ttl{flex:1;min-width:0;text-align:center;line-height:1.2}
+.rbar .ttl b{display:block;font-family:var(--f-display);font-weight:600;font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rbar .ttl small{color:var(--r-muted);font-size:.76rem}
+.progress{position:absolute;left:0;bottom:-1px;height:2px;background:var(--r-accent);width:0;transition:width .1s linear}
+.reader{color:var(--r-ink);padding-top:calc(56px + env(safe-area-inset-top,0px))}
+.ch-art{position:relative;height:clamp(200px,38vw,440px);overflow:hidden;-webkit-mask-image:linear-gradient(180deg,#000 55%,transparent);mask-image:linear-gradient(180deg,#000 55%,transparent)}
+.ch-art svg{animation:drift 26s ease-in-out infinite alternate;transform-origin:50% 60%}
+@keyframes drift{from{transform:scale(1.02)}to{transform:scale(1.08) translateX(-1.2%)}}
+@media (prefers-reduced-motion:reduce){.ch-art svg{animation:none}*{scroll-behavior:auto!important}}
+.ch-head{max-width:var(--rwidth);margin:-60px auto 0;position:relative;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));text-align:center}
+.ch-head .k{font-family:var(--f-ui);font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;color:var(--r-muted);font-weight:700}
+.ch-head h1{font-family:var(--f-display);font-weight:800;font-variation-settings:"wdth" 76;font-size:clamp(2rem,5.2vw,3.1rem);line-height:1.15;margin:.25em 0 .3em;text-wrap:balance}
+.ch-head .m{color:var(--r-muted);font-size:.9rem}
+.orn{display:flex;justify-content:center;color:var(--r-accent);margin:26px auto}
+.orn svg{width:120px;height:18px}
+.prose{max-width:var(--rwidth);margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));font-family:var(--f-read);font-size:var(--rsize);line-height:var(--rlh);font-variation-settings:"wdth" 100;hyphens:manual;overflow-wrap:break-word}
+.prose p{margin:0 0 1.05em}
+.prose.just p{text-align:justify}
+.prose p.mark{background:linear-gradient(90deg,color-mix(in srgb,var(--r-accent) 14%,transparent),transparent);border-radius:6px;box-shadow:-10px 0 0 0 color-mix(in srgb,var(--r-accent) 14%,transparent)}
+.dropcap{float:left;font-family:var(--f-display);font-weight:800;font-size:3.35em;line-height:.92;padding:.08em .14em 0 0;color:var(--r-accent)}
+.prose p.pq{font-style:normal}
+.endcard{max-width:var(--rwidth);margin:30px auto 0;padding:0 max(20px,env(safe-area-inset-right,0px)) 0 max(20px,env(safe-area-inset-left,0px))}
+.next{display:grid;grid-template-columns:1fr;overflow:hidden;border-radius:18px;border:1px solid var(--r-line);text-decoration:none;color:var(--r-ink);background:color-mix(in srgb,var(--r-ink) 3%,var(--r-bg))}
+.next .na{aspect-ratio:21/8;max-width:100%}
+.next .nb{padding:16px 18px 18px}
+.next .nb small{color:var(--r-muted);letter-spacing:.12em;text-transform:uppercase;font-weight:700;font-size:.74rem}
+.next .nb b{display:block;font-family:var(--f-display);font-size:1.45rem;font-weight:700;margin-top:2px}
+.pager{display:flex;justify-content:space-between;gap:10px;margin:18px 0 0;flex-wrap:wrap}
+.pager a{color:var(--r-muted);text-decoration:none;font-size:.92rem;padding:.5em .2em}
+.pager a:hover{color:var(--r-ink)}
+.reader-foot{height:120px}
+
+/* sheets and drawers */
+.scrim{position:fixed;inset:0;background:rgba(10,8,14,.38);z-index:70;opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;z-index:80;background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.3);transition:transform .32s cubic-bezier(.2,.8,.2,1)}
+.sheet.settings{right:max(12px,env(safe-area-inset-right,0px));top:calc(64px + env(safe-area-inset-top,0px));width:min(360px,calc(100vw - 24px));border-radius:20px;padding:18px;transform:translateY(-8px) scale(.98);opacity:0;pointer-events:none;visibility:hidden;transition:opacity .2s,transform .25s}
+.sheet.settings.on{opacity:1;transform:none;pointer-events:auto;visibility:visible}
+@media (max-width:600px){.sheet.settings{left:0;right:0;top:auto;bottom:0;width:auto;border-radius:22px 22px 0 0;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));transform:translateY(100%);opacity:1}.sheet.settings.on{transform:none}}
+.sheet h4{margin:0 0 6px;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.sheet .row{display:grid;gap:8px;margin-bottom:16px}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}
+.seg button{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:.55em .4em;cursor:pointer;font-weight:600;font-size:.9rem;min-width:0}
+.seg button[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);color:var(--accent)}
+.swatch{display:grid;gap:4px;justify-items:center}
+.swatch i{display:block;width:100%;height:30px;border-radius:8px;border:1px solid rgba(0,0,0,.12);font-style:normal;font-family:var(--f-display);display:grid;place-items:center;font-size:1rem}
+.stepper{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px}
+.stepper button{width:44px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--bg);cursor:pointer;font-family:var(--f-display);font-weight:700}
+.stepper input{width:100%;accent-color:var(--accent)}
+.drawer{left:0;top:0;bottom:0;width:min(420px,90vw);transform:translateX(-102%);visibility:hidden;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s linear .32s;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-left:env(safe-area-inset-left,0px)}
+.drawer.on{transform:none;visibility:visible;transition:transform .32s cubic-bezier(.2,.8,.2,1)}
+.drawer header{display:flex;align-items:center;gap:8px;padding:12px 12px 8px 18px;border-bottom:1px solid var(--line)}
+.drawer header div{flex:1;min-width:0}
+.drawer header b{font-family:var(--f-display);font-size:1.2rem}
+.drawer .tabs{display:flex;gap:6px;padding:10px 14px 4px;flex-wrap:wrap}
+.drawer .tabs button{border:1px solid var(--line);background:transparent;border-radius:999px;padding:.2em .75em;cursor:pointer;font-size:.85rem}
+.drawer .tabs button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.drawer .list{overflow:auto;padding:6px 8px calc(16px + env(safe-area-inset-bottom,0px));flex:1}
+.drawer .list a{display:grid;grid-template-columns:2.6em 1fr;gap:8px;padding:9px 10px;border-radius:10px;text-decoration:none;align-items:baseline}
+.drawer .list a:hover{background:var(--surface-2)}
+.drawer .list a .n{font-family:var(--f-latin);color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.drawer .list a b{font-family:var(--f-display);font-weight:500}
+.drawer .list a.current{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.drawer .list a.current b{font-weight:700}
+.drawer .list a.done .n{color:var(--accent)}
+.drawer .bm{display:grid;gap:2px}
+.drawer .bm a{grid-template-columns:1fr}
+.drawer .bm small{color:var(--muted);display:block}
+.empty{color:var(--muted);padding:14px 12px;font-size:.92rem}
+.toast{visibility:hidden;position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140%);background:var(--ink);color:var(--bg);padding:.65em .7em .65em 1.1em;border-radius:999px;display:flex;gap:10px;align-items:center;z-index:90;box-shadow:var(--shadow);transition:transform .35s cubic-bezier(.2,.8,.2,1);max-width:calc(100vw - 32px);font-size:.92rem}
+.toast.on{transform:translate(-50%,0);visibility:visible}
+.toast button{background:color-mix(in srgb,var(--bg) 16%,transparent);border:0;border-radius:999px;padding:.35em .9em;cursor:pointer;color:inherit;font-weight:700;white-space:nowrap}
+.loading{display:grid;place-items:center;min-height:50vh;color:var(--r-muted)}
+.skel{width:min(36em,90%);margin:40px auto;display:grid;gap:14px}
+.skel i{display:block;height:16px;border-radius:8px;background:linear-gradient(90deg,var(--r-line),color-mix(in srgb,var(--r-line) 40%,transparent),var(--r-line));background-size:200% 100%;animation:sh 1.2s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.view-enter{animation:fadein .35s ease both}
+@keyframes fadein{from{opacity:.001;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.view-enter{animation:none}}
+</style>
+
+<div id="app"></div>
+<div class="scrim" id="scrim"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toastMsg"></span><button id="toastBtn" type="button" hidden></button></div>
+
+<script>
+(() => {
+'use strict';
+/* ================= helpers ================= */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = {
+  get(k, d){ try { const v = localStorage.getItem('ps:' + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v){ try { localStorage.setItem('ps:' + k, JSON.stringify(v)); } catch {} }
+};
+const ICON = {
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
+  list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>',
+  aa:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19l5-14 5 14M4.8 14h6.4M14.5 19l3.5-9 3.5 9M15.6 16h4.8"/></svg>',
+  bm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg>',
+  bmOn:'<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg>',
+  close:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 012-2h13v16H6a2 2 0 00-2 2zm0 0A2 2 0 006 21.5h13"/></svg>'
+};
+const ORN = '<svg viewBox="0 0 120 18" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2 9h38M80 9h38"/><path d="M60 2l7 7-7 7-7-7z" fill="currentColor" fill-opacity=".18"/><circle cx="46" cy="9" r="2" fill="currentColor"/><circle cx="74" cy="9" r="2" fill="currentColor"/></svg>';
+
+/* ================= original illustration engine =================
+   Every picture in this reader is drawn here in code: layered landscapes of the Chola country
+   (river, sea, temple towers, palaces, palms) with a palette per book and a seed per chapter. */
+function rng(seed){ let s = (seed * 2654435761) >>> 0 || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }; }
+const PAL = {
+ 1:{day:{sky:['#f9e3b8','#efb784'],sun:'#fff6e0',far:'#cf9d7d',mid:'#8f6a5a',near:'#3a2b2d',water:['#efc797','#a8735c'],glow:'#ffe9bf'},
+    dusk:{sky:['#f3a36f','#8b4f6b'],sun:'#ffd59a',far:'#9b5a64',mid:'#6b3d52',near:'#2a1a26',water:['#d98a6b','#5a3048'],glow:'#ffc78a'},
+    night:{sky:['#141d33','#3b4566'],sun:'#efe8d0',far:'#353e60',mid:'#262c48',near:'#0e101b',water:['#2b3456','#121729'],glow:'#c8c8ec'}},
+ 2:{day:{sky:['#bfe3e0','#f3d2a6'],sun:'#fff8e6',far:'#7fb3b0',mid:'#3f7c80',near:'#10292f',water:['#5aa3a6','#1d5560'],glow:'#fff0c8'},
+    dusk:{sky:['#ffb489','#5e5a92'],sun:'#ffdca6',far:'#7a6a98',mid:'#44457a',near:'#151630',water:['#c9867f','#2b2e5c'],glow:'#ffcf9e'},
+    night:{sky:['#071523','#1d3d5f'],sun:'#e6f0f2',far:'#163450',mid:'#0f2840',near:'#050d17',water:['#13344f','#061220'],glow:'#bfe2ff'}},
+ 3:{day:{sky:['#f2c4a0','#c4583e'],sun:'#fff0d0',far:'#a8503e',mid:'#6d2a2c',near:'#1f0b10',water:['#c76a50','#5e2228'],glow:'#ffd7a3'},
+    dusk:{sky:['#e0603f','#3e1430'],sun:'#ffc27a',far:'#8a2f3a',mid:'#561a2c',near:'#16070d',water:['#a8453f','#2c0c1c'],glow:'#ffab6b'},
+    night:{sky:['#0c0910','#3a1322'],sun:'#e8714f',far:'#2c1420',mid:'#1e0d17',near:'#08040a',water:['#2a1018','#0a0408'],glow:'#ff7a55'}},
+ 4:{day:{sky:['#d9cdf0','#f0c58c'],sun:'#fff6dc',far:'#a593c4',mid:'#6a5a92',near:'#1d1733',water:['#b8a2d0','#55467d'],glow:'#ffe5ae'},
+    dusk:{sky:['#e7a46b','#3d2a6e'],sun:'#ffe0a0',far:'#7d5f96',mid:'#4b3a72',near:'#150f2a',water:['#a77b8f','#2b2152'],glow:'#ffd08a'},
+    night:{sky:['#120d2a','#3a2c6a'],sun:'#f6e7c0',far:'#2b2453',mid:'#1d1840',near:'#0a0818',water:['#2a2352','#0d0a20'],glow:'#e8d29a'}},
+ 5:{day:{sky:['#ffe6c2','#f4a37a'],sun:'#fffaf0',far:'#e09a86',mid:'#a8616a',near:'#3b1d2a',water:['#f2b896','#a3586a'],glow:'#fff0d0'},
+    dusk:{sky:['#ff9e6e','#a23b62'],sun:'#ffe0ae',far:'#b95468',mid:'#7c2e52',near:'#2a0f22',water:['#e07c75','#5d1d45'],glow:'#ffc890'},
+    night:{sky:['#1a1024','#4f2a4a'],sun:'#ffe9c9',far:'#3f2440',mid:'#2b1830',near:'#100812',water:['#3a2140','#120a16'],glow:'#ffb98a'}}
+};
+const f1 = n => Math.round(n * 10) / 10;
+function ridge(r, W, base, amp, H, pts = 48){
+  const p = [r()*6.3, r()*6.3, r()*6.3], fq = [1 + r()*1.5, 3 + r()*3, 8 + r()*6];
+  let d = `M0 ${H}`;
+  for (let i = 0; i <= pts; i++){
+    const x = i / pts, n = .55*Math.sin(fq[0]*x*6.28+p[0]) + .3*Math.sin(fq[1]*x*6.28+p[1]) + .15*Math.sin(fq[2]*x*6.28+p[2]);
+    d += ` L${f1(x*W)} ${f1(base - amp*(.5+.5*n))}`;
+  }
+  return d + ` L${W} ${H}Z`;
+}
+function palm(r, x, y, h, lean, col){
+  const tx = x + lean, ty = y - h, cx = x + lean*.2, cy = y - h*.55;
+  const w0 = h*.035, w1 = h*.016;
+  let s = `<path fill="${col}" d="M${f1(x-w0)} ${y} Q${f1(cx-w0)} ${f1(cy)} ${f1(tx-w1)} ${f1(ty)} L${f1(tx+w1)} ${f1(ty)} Q${f1(cx+w0)} ${f1(cy)} ${f1(x+w0)} ${y}Z"/>`;
+  const n = 8 + (r()*3|0);
+  for (let i = 0; i < n; i++){
+    const u = i/(n-1), a = -Math.PI*.98 + u*Math.PI*.96 + (r()-.5)*.25, len = h*(.3 + r()*.14);
+    const side = Math.abs(Math.cos(a));
+    const ex = tx + Math.cos(a)*len, ey = ty - Math.sin(-a)*len*.18 + len*(.18 + .5*side);
+    const mx = tx + Math.cos(a)*len*.55, my = ty - len*(.16 + .22*(1 - side));
+    const wv = len*.07;
+    s += `<path fill="${col}" d="M${f1(tx)} ${f1(ty)} Q${f1(mx)} ${f1(my-wv)} ${f1(ex)} ${f1(ey)} Q${f1(mx)} ${f1(my+wv)} ${f1(tx)} ${f1(ty)}Z"/>`;
+  }
+  return s;
+}
+function gopuram(x, y, w, h, col, lit){
+  let s = '', tiers = 6, th = h*.74/tiers, bw = w, yy = y;
+  for (let i = 0; i < tiers; i++){
+    const tw = bw*.9;
+    s += `<path fill="${col}" d="M${f1(x-bw/2)} ${f1(yy)} L${f1(x-tw/2)} ${f1(yy-th)} L${f1(x+tw/2)} ${f1(yy-th)} L${f1(x+bw/2)} ${f1(yy)}Z"/>`;
+    s += `<rect fill="${col}" x="${f1(x-tw/2-w*.02)}" y="${f1(yy-th-h*.012)}" width="${f1(tw+w*.04)}" height="${f1(h*.018)}"/>`;
+    yy -= th; bw = tw*.92;
+  }
+  const sw = bw*1.05, sh = h*.14;
+  s += `<path fill="${col}" d="M${f1(x-sw/2)} ${f1(yy)} L${f1(x-sw/2)} ${f1(yy-sh*.45)} Q${f1(x-sw/2)} ${f1(yy-sh)} ${f1(x-sw/2+sh*.55)} ${f1(yy-sh)} L${f1(x+sw/2-sh*.55)} ${f1(yy-sh)} Q${f1(x+sw/2)} ${f1(yy-sh)} ${f1(x+sw/2)} ${f1(yy-sh*.45)} L${f1(x+sw/2)} ${f1(yy)}Z"/>`;
+  for (let k = 0; k < 5; k++){ const kx = x - sw*.36 + k*sw*.18; s += `<path fill="${col}" d="M${f1(kx-w*.018)} ${f1(yy-sh)} Q${f1(kx)} ${f1(yy-sh-h*.07)} ${f1(kx+w*.018)} ${f1(yy-sh)}Z"/>`; }
+  if (lit) s += `<path fill="${lit}" opacity=".85" d="M${f1(x-w*.07)} ${y} L${f1(x-w*.07)} ${f1(y-h*.12)} Q${f1(x)} ${f1(y-h*.17)} ${f1(x+w*.07)} ${f1(y-h*.12)} L${f1(x+w*.07)} ${y}Z"/>`;
+  return s;
+}
+function vimana(x, y, w, h, col, lit){
+  let s = `<rect fill="${col}" x="${f1(x-w/2)}" y="${f1(y-h*.2)}" width="${f1(w)}" height="${f1(h*.2)}"/>`;
+  const tiers = 12, top = y - h*.2, th = h*.58/tiers;
+  for (let i = 0; i < tiers; i++){
+    const tw = w*(.92 - i*.055);
+    s += `<rect fill="${col}" x="${f1(x-tw/2)}" y="${f1(top-(i+1)*th)}" width="${f1(tw)}" height="${f1(th+.6)}"/>`;
+  }
+  const dy = top - tiers*th, dr = w*.17;
+  s += `<path fill="${col}" d="M${f1(x-dr)} ${f1(dy)} Q${f1(x-dr)} ${f1(dy-dr*1.5)} ${f1(x)} ${f1(dy-dr*1.6)} Q${f1(x+dr)} ${f1(dy-dr*1.5)} ${f1(x+dr)} ${f1(dy)}Z"/>`;
+  s += `<path fill="${col}" d="M${f1(x-dr*.22)} ${f1(dy-dr*1.55)} Q${f1(x)} ${f1(dy-dr*2.6)} ${f1(x+dr*.22)} ${f1(dy-dr*1.55)}Z"/>`;
+  if (lit) for (let i = 0; i < 3; i++) s += `<rect fill="${lit}" opacity=".8" x="${f1(x-w*.33+i*w*.3)}" y="${f1(y-h*.14)}" width="${f1(w*.07)}" height="${f1(h*.09)}" rx="${f1(w*.035)}"/>`;
+  return s;
+}
+function palace(r, x, y, w, h, col, lit){
+  let s = `<rect fill="${col}" x="${f1(x-w/2)}" y="${f1(y-h*.55)}" width="${f1(w)}" height="${f1(h*.55)}"/>`;
+  s += `<rect fill="${col}" x="${f1(x-w*.52)}" y="${f1(y-h*.58)}" width="${f1(w*1.04)}" height="${f1(h*.04)}"/>`;
+  const bays = 5 + (r()*4|0);
+  for (let i = 0; i < bays; i++){
+    const bx = x - w/2 + (i+.5)*w/bays, bw = w/bays*.42, top = y - h*.45;
+    s += `<path fill="${lit || 'rgba(255,255,255,.14)'}" opacity="${lit ? .8 : 1}" d="M${f1(bx-bw/2)} ${f1(y-h*.08)} L${f1(bx-bw/2)} ${f1(top+bw*.5)} Q${f1(bx)} ${f1(top-bw*.3)} ${f1(bx+bw/2)} ${f1(top+bw*.5)} L${f1(bx+bw/2)} ${f1(y-h*.08)}Z"/>`;
+  }
+  const pav = [[-.32,.22],[0,.34],[.32,.22]];
+  for (const [ox, hh] of pav){
+    const px = x + ox*w, pw = w*.2, base = y - h*.58, ph = h*hh;
+    s += `<path fill="${col}" d="M${f1(px-pw/2)} ${f1(base)} L${f1(px-pw*.36)} ${f1(base-ph*.55)} L${f1(px-pw*.12)} ${f1(base-ph*.55)} Q${f1(px)} ${f1(base-ph*1.05)} ${f1(px+pw*.12)} ${f1(base-ph*.55)} L${f1(px+pw*.36)} ${f1(base-ph*.55)} L${f1(px+pw/2)} ${f1(base)}Z"/>`;
+    s += `<path stroke="${col}" stroke-width="${f1(w*.006)}" d="M${f1(px)} ${f1(base-ph*.98)} v${f1(-h*.14)}"/><path fill="${col}" d="M${f1(px)} ${f1(base-ph*.98-h*.14)} l${f1(w*.05)} ${f1(h*.025)} l${f1(-w*.05)} ${f1(h*.03)}Z"/>`;
+  }
+  return s;
+}
+function houses(r, x0, x1, y, h, col){
+  let s = '', x = x0;
+  while (x < x1){ const w = h*(.8 + r()*1.2), hh = h*(.45 + r()*.4);
+    s += `<path fill="${col}" d="M${f1(x)} ${y} L${f1(x)} ${f1(y-hh)} L${f1(x+w/2)} ${f1(y-hh-h*.35)} L${f1(x+w)} ${f1(y-hh)} L${f1(x+w)} ${y}Z"/>`; x += w*(.85 + r()*.3); }
+  return s;
+}
+function treeline(r, W, y, h, col, n){
+  let s = '';
+  for (let i = 0; i < n; i++){ const x = r()*W, rr = h*(.35 + r()*.5), yy = y - rr*.4;
+    s += `<ellipse fill="${col}" cx="${f1(x)}" cy="${f1(yy)}" rx="${f1(rr*1.25)}" ry="${f1(rr)}"/><ellipse fill="${col}" cx="${f1(x+rr*.7)}" cy="${f1(yy+rr*.2)}" rx="${f1(rr*.9)}" ry="${f1(rr*.75)}"/>`; }
+  return s;
+}
+function boat(x, y, s, col, sail){
+  return `<path fill="${col}" d="M${f1(x-s)} ${f1(y-s*.12)} Q${f1(x)} ${f1(y+s*.28)} ${f1(x+s)} ${f1(y-s*.16)} Q${f1(x)} ${f1(y+s*.08)} ${f1(x-s)} ${f1(y-s*.12)}Z"/>`
+    + `<path stroke="${col}" stroke-width="${f1(s*.04)}" d="M${f1(x)} ${f1(y)} V${f1(y-s*1.1)}"/>`
+    + `<path fill="${sail}" d="M${f1(x+s*.04)} ${f1(y-s*1.08)} Q${f1(x+s*.7)} ${f1(y-s*.6)} ${f1(x+s*.62)} ${f1(y-s*.12)} L${f1(x+s*.04)} ${f1(y-s*.12)}Z"/>`;
+}
+function ship(x, y, s, col, sail){
+  let o = `<path fill="${col}" d="M${f1(x-s)} ${f1(y-s*.2)} L${f1(x+s*1.1)} ${f1(y-s*.24)} Q${f1(x+s*.8)} ${f1(y+s*.12)} ${f1(x+s*.5)} ${f1(y+s*.1)} L${f1(x-s*.7)} ${f1(y+s*.1)}Z"/>`;
+  for (const m of [-.35, .35]){ const mx = x + m*s;
+    o += `<path stroke="${col}" stroke-width="${f1(s*.03)}" d="M${f1(mx)} ${f1(y-s*.2)} V${f1(y-s*1.25)}"/>`;
+    o += `<path fill="${sail}" d="M${f1(mx-s*.28)} ${f1(y-s*1.15)} Q${f1(mx)} ${f1(y-s*1.05)} ${f1(mx+s*.28)} ${f1(y-s*1.15)} Q${f1(mx+s*.36)} ${f1(y-s*.75)} ${f1(mx+s*.28)} ${f1(y-s*.35)} Q${f1(mx)} ${f1(y-s*.25)} ${f1(mx-s*.28)} ${f1(y-s*.35)} Q${f1(mx-s*.2)} ${f1(y-s*.75)} ${f1(mx-s*.28)} ${f1(y-s*1.15)}Z"/>`; }
+  return o;
+}
+function birds(r, W, H, col, n){
+  let s = '';
+  const cx = W*(.2 + r()*.6), cy = H*(.16 + r()*.2);
+  for (let i = 0; i < n; i++){ const x = cx + (r()-.5)*W*.22, y = cy + (r()-.5)*H*.14, d = 5 + r()*7;
+    s += `<path fill="none" stroke="${col}" stroke-width="1.6" stroke-linecap="round" d="M${f1(x)} ${f1(y)} q${f1(d*.5)} ${f1(-d*.55)} ${f1(d)} 0 q${f1(d*.5)} ${f1(-d*.55)} ${f1(d)} 0"/>`; }
+  return s;
+}
+let uid = 0;
+function scene(o){
+  const W = o.w || 1200, H = o.h || 460, r = rng(o.seed || 1), time = o.time || '', kind = o.kind || 'river';
+  const P = PAL[o.book][time === 'night' ? 'night' : time === 'dusk' ? 'dusk' : 'day'];
+  const id = 's' + (++uid), lite = !!o.lite, night = time === 'night';
+  const watery = kind === 'sea' || kind === 'river';
+  const hz = H * (watery ? (kind === 'sea' ? .6 : .64) : .7);
+  const sx = W*(.18 + r()*.64);
+  const sy = night ? H*(.14 + r()*.12) : (time === 'dawn' || time === 'dusk') ? hz - H*(.06 + r()*.08) : H*(.2 + r()*.14);
+  const sr = night ? H*.055 : H*(.07 + r()*.03);
+  let s = `<svg class="art" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>`
+    + `<linearGradient id="${id}k" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.sky[0]}"/><stop offset="1" stop-color="${P.sky[1]}"/></linearGradient>`
+    + `<radialGradient id="${id}g"><stop offset="0" stop-color="${P.glow}" stop-opacity=".9"/><stop offset=".35" stop-color="${P.glow}" stop-opacity=".35"/><stop offset="1" stop-color="${P.glow}" stop-opacity="0"/></radialGradient>`
+    + `<linearGradient id="${id}w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.water[0]}"/><stop offset="1" stop-color="${P.water[1]}"/></linearGradient>`
+    + `<linearGradient id="${id}h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.far}" stop-opacity=".0"/><stop offset="1" stop-color="${P.sky[1]}" stop-opacity=".55"/></linearGradient>`
+    + `</defs><rect width="${W}" height="${H}" fill="url(#${id}k)"/>`;
+  if (night && !lite){ for (let i = 0; i < 70; i++) s += `<circle cx="${f1(r()*W)}" cy="${f1(r()*hz*.85)}" r="${f1(.5 + r()*1.3)}" fill="#fff" opacity="${f1(.25 + r()*.6)}"/>`; }
+  s += `<circle cx="${f1(sx)}" cy="${f1(sy)}" r="${f1(sr*5.5)}" fill="url(#${id}g)"/>`;
+  s += `<circle cx="${f1(sx)}" cy="${f1(sy)}" r="${f1(sr)}" fill="${P.sun}"/>`;
+  if (night && o.book !== 3) s += `<circle cx="${f1(sx + sr*.42)}" cy="${f1(sy - sr*.2)}" r="${f1(sr*.92)}" fill="${P.sky[0]}" opacity=".0"/>`;
+  if (!lite){
+    const nc = night ? 2 : 4;
+    for (let i = 0; i < nc; i++){ const cx = r()*W, cy = H*(.1 + r()*.35), cw = W*(.12 + r()*.2);
+      s += `<ellipse cx="${f1(cx)}" cy="${f1(cy)}" rx="${f1(cw)}" ry="${f1(H*(.012 + r()*.018))}" fill="${night ? P.far : '#fff'}" opacity="${night ? .35 : .28}"/>`; }
+  }
+  if (o.storm && !lite){
+    const cx = W*(.25 + r()*.5), cy = H*.3;
+    for (let k = 0; k < 5; k++){ let d = ''; const turns = 2.6;
+      for (let t = 0; t <= 60; t++){ const a = t/60*turns*6.28 + k*1.25, rad = 8 + t*(W*.006) * (1 + k*.12);
+        d += (t ? 'L' : 'M') + f1(cx + Math.cos(a)*rad*1.9) + ' ' + f1(cy + Math.sin(a)*rad*.55); }
+      s += `<path d="${d}" fill="none" stroke="${P.glow}" stroke-opacity="${f1(.18 - k*.025)}" stroke-width="${f1(2.5 - k*.3)}" stroke-linecap="round"/>`; }
+  }
+  // far hills / far shore
+  if (kind === 'sea'){
+    if (r() > .35){ const x0 = r()*W*.6; s += `<path fill="${P.far}" opacity=".85" d="M${f1(x0)} ${f1(hz)} Q${f1(x0+W*.12)} ${f1(hz-H*.07)} ${f1(x0+W*.22)} ${f1(hz-H*.03)} Q${f1(x0+W*.3)} ${f1(hz-H*.05)} ${f1(x0+W*.4)} ${f1(hz)}Z"/>`; }
+  } else {
+    s += `<path fill="${P.far}" opacity=".9" d="${ridge(r, W, hz - H*.02, H*.16, hz + 2)}"/>`;
+  }
+  // midground by subject
+  const midCol = P.mid, lit = night ? P.glow : null;
+  if (kind === 'temple'){
+    const big = o.book >= 4 && r() > .3;
+    const tx = o.tx != null ? W*o.tx : W*(.3 + r()*.4);
+    s += big ? vimana(tx, hz + H*.02, W*.16, H*.62, midCol, lit) : gopuram(tx, hz + H*.02, W*.13, H*.56, midCol, lit);
+    if (!lite) s += gopuram(W*(.1 + r()*.12), hz + H*.02, W*.06, H*.26, P.far, null);
+  } else if (kind === 'palace'){
+    s += palace(r, W*(.35 + r()*.3), hz + H*.03, W*(.42 + r()*.12), H*.42, midCol, lit);
+  } else if (kind === 'town'){
+    s += houses(r, -20, W + 20, hz + H*.03, H*.09, P.far);
+    s += gopuram(W*(.62 + r()*.22), hz + H*.03, W*.09, H*.4, midCol, lit);
+    s += houses(r, -20, W + 20, hz + H*.06, H*.12, midCol);
+  } else if (kind === 'forest'){
+    s += treeline(r, W, hz, H*.13, P.far, lite ? 6 : 14);
+  }
+  // ground or water
+  if (watery){
+    s += `<rect x="0" y="${f1(hz)}" width="${W}" height="${f1(H-hz)}" fill="url(#${id}w)"/>`;
+    s += `<rect x="0" y="${f1(hz)}" width="${W}" height="${f1(H*.05)}" fill="url(#${id}h)" opacity=".5"/>`;
+    if (!lite){
+      for (let i = 0; i < 26; i++){ const yy = hz + 4 + Math.pow(r(), 1.6)*(H - hz - 8), ww = 20 + r()*90 * (1 + (yy - hz)/H);
+        const xx = Math.abs(r()*W - sx) < W*.08 ? r()*W : r()*W;
+        s += `<rect x="${f1(xx)}" y="${f1(yy)}" width="${f1(ww)}" height="1.6" rx=".8" fill="${P.glow}" opacity="${f1(.12 + r()*.2)}"/>`; }
+      for (let i = 0; i < 14; i++){ const yy = hz + 3 + i*(H - hz)/16, ww = sr*(2.2 - i*.11) * (.6 + r()*.6);
+        s += `<rect x="${f1(sx - ww/2 + (r()-.5)*10)}" y="${f1(yy)}" width="${f1(ww)}" height="2" rx="1" fill="${P.sun}" opacity="${f1(.55 - i*.03)}"/>`; }
+    }
+    if (kind === 'sea'){
+      const by = hz + (H - hz)*(.35 + r()*.3);
+      s += r() > .5 ? ship(W*(.15 + r()*.7), hz + (H-hz)*.12, H*.07, P.mid, P.far) : '';
+      s += boat(W*(.15 + r()*.7), by, H*(.07 + r()*.03), P.near, P.mid);
+    } else {
+      // river bank with palms on one side
+      const left = r() > .5, bx = left ? 0 : W, dir = left ? 1 : -1, bw = W*(.32 + r()*.18);
+      s += `<path fill="${P.near}" d="M${bx} ${H} L${bx} ${f1(hz + H*.04)} Q${f1(bx + dir*bw*.5)} ${f1(hz + H*.02)} ${f1(bx + dir*bw)} ${f1(H*.92)} L${f1(bx + dir*bw)} ${H}Z"/>`;
+      const np = lite ? 2 : 3 + (r()*2|0);
+      for (let i = 0; i < np; i++){ const px = bx + dir*(bw*(.08 + i*.18) + r()*20); s += palm(r, px, f1(hz + H*.06 + i*H*.03), H*(.44 + r()*.22), dir*(H*(.04 + r()*.1)) * (i % 2 ? -1 : 1), P.near); }
+      if (r() > .4) s += boat(W*(.45 + r()*.25)*1, hz + (H-hz)*.45, H*.06, P.near, P.mid);
+    }
+  } else {
+    s += `<path fill="${P.mid}" d="${ridge(r, W, H*.86, H*.08, H)}"/>`;
+    if (kind === 'forest'){ s += treeline(r, W, H*.86, H*.22, P.near, lite ? 5 : 11); }
+    s += `<path fill="${P.near}" d="${ridge(r, W, H*.97, H*.06, H)}"/>`;
+    if (kind !== 'forest'){ const np = lite ? 1 : 2 + (r()*2|0);
+      for (let i = 0; i < np; i++){ const side = (i % 2 || o.right) ? W*(.82 + r()*.16) : W*(.02 + r()*.16); s += palm(r, side, H*.97, H*(.5 + r()*.3), (r()-.5)*H*.2, P.near); } }
+  }
+  if (!night && !lite) s += birds(r, W, H, P.near, 3 + (r()*5|0));
+  if (o.emblem) s += emblem(o.book, W, H, P);
+  return s + '</svg>';
+}
+function emblem(b, W, H, P){
+  const cx = W/2, cy = H*.33, g = '#f6dfa4', st = `fill="none" stroke="${g}" stroke-width="${f1(W*.006)}" stroke-linecap="round" stroke-linejoin="round" opacity=".92"`;
+  let s = `<circle cx="${cx}" cy="${f1(cy)}" r="${f1(W*.2)}" ${st} stroke-opacity=".35"/><circle cx="${cx}" cy="${f1(cy)}" r="${f1(W*.215)}" ${st} stroke-opacity=".2" stroke-dasharray="2 9"/>`;
+  if (b === 1){ // lotus over ripples: the Aadi floods
+    for (let i = 1; i <= 3; i++) s += `<ellipse cx="${cx}" cy="${f1(cy + W*.08)}" rx="${f1(W*.06*i)}" ry="${f1(W*.016*i)}" ${st} stroke-opacity="${f1(.8 - i*.2)}"/>`;
+    for (let i = -3; i <= 3; i++){ const a = i*.32, L = W*.13*(1 - Math.abs(i)*.12);
+      const tx = cx + Math.sin(a)*L, ty = cy + W*.06 - Math.cos(a)*L;
+      s += `<path ${st} d="M${cx} ${f1(cy + W*.065)} Q${f1(cx + Math.sin(a - .35)*L*.7)} ${f1(cy + W*.06 - Math.cos(a - .35)*L*.7)} ${f1(tx)} ${f1(ty)} Q${f1(cx + Math.sin(a + .35)*L*.7)} ${f1(cy + W*.06 - Math.cos(a + .35)*L*.7)} ${cx} ${f1(cy + W*.065)}"/>`; }
+  } else if (b === 2){ // whirlwind spiral
+    let d = ''; for (let t = 0; t <= 140; t++){ const a = t/140*4.4*6.28, rad = W*.004 + t*W*.0011; d += (t ? 'L' : 'M') + f1(cx + Math.cos(a)*rad) + ' ' + f1(cy + Math.sin(a)*rad); }
+    s += `<path ${st} d="${d}"/>`;
+  } else if (b === 3){ // sword
+    const L = W*.36, t = cy - L*.55;
+    s += `<path ${st} d="M${cx} ${f1(t)} L${f1(cx + W*.018)} ${f1(t + W*.05)} L${f1(cx + W*.016)} ${f1(t + L*.78)} L${f1(cx - W*.016)} ${f1(t + L*.78)} L${f1(cx - W*.018)} ${f1(t + W*.05)}Z M${cx} ${f1(t + W*.05)} V${f1(t + L*.74)}"/>`;
+    s += `<path ${st} d="M${f1(cx - W*.09)} ${f1(t + L*.8)} Q${cx} ${f1(t + L*.74)} ${f1(cx + W*.09)} ${f1(t + L*.8)} M${cx} ${f1(t + L*.8)} V${f1(t + L*.95)}"/><circle cx="${cx}" cy="${f1(t + L*.99)}" r="${f1(W*.014)}" ${st}/>`;
+  } else if (b === 4){ // jewelled crown
+    const w = W*.26, y0 = cy + W*.06, y1 = cy - W*.07;
+    s += `<path ${st} d="M${f1(cx - w/2)} ${f1(y0)} L${f1(cx - w/2)} ${f1(y1 + W*.03)} L${f1(cx - w*.25)} ${f1(y1 + W*.06)} L${f1(cx - w*.13)} ${f1(y1 - W*.01)} L${cx} ${f1(y1 - W*.06)} L${f1(cx + w*.13)} ${f1(y1 - W*.01)} L${f1(cx + w*.25)} ${f1(y1 + W*.06)} L${f1(cx + w/2)} ${f1(y1 + W*.03)} L${f1(cx + w/2)} ${f1(y0)}Z M${f1(cx - w/2)} ${f1(y0 - W*.03)} H${f1(cx + w/2)}"/>`;
+    for (const k of [-.3, 0, .3]) s += `<circle cx="${f1(cx + k*w)}" cy="${f1(y0 - W*.015)}" r="${f1(W*.009)}" fill="${g}"/>`;
+    s += `<circle cx="${cx}" cy="${f1(y1 - W*.075)}" r="${f1(W*.012)}" ${st}/>`;
+  } else { // lamp and flame
+    s += `<path ${st} d="M${f1(cx - W*.11)} ${f1(cy + W*.06)} Q${cx} ${f1(cy + W*.15)} ${f1(cx + W*.11)} ${f1(cy + W*.06)} Q${cx} ${f1(cy + W*.09)} ${f1(cx - W*.11)} ${f1(cy + W*.06)}Z"/>`;
+    s += `<path fill="${g}" opacity=".9" d="M${cx} ${f1(cy - W*.12)} Q${f1(cx + W*.05)} ${f1(cy - W*.02)} ${f1(cx + W*.025)} ${f1(cy + W*.035)} Q${cx} ${f1(cy + W*.06)} ${f1(cx - W*.025)} ${f1(cy + W*.035)} Q${f1(cx - W*.05)} ${f1(cy - W*.02)} ${cx} ${f1(cy - W*.12)}Z"/>`;
+  }
+  return s;
+}
+const BOOK_ART = {1:{kind:'river',time:'dawn',seed:11},2:{kind:'sea',time:'dusk',seed:23,storm:1},3:{kind:'forest',time:'night',seed:37},4:{kind:'palace',time:'night',seed:41},5:{kind:'temple',time:'dawn',seed:58}};
+const artCache = new Map();
+function chapterArt(b, c, opt = {}){
+  const key = `${b}-${c.n}-${opt.lite ? 1 : 0}-${opt.w || ''}`;
+  if (!artCache.has(key)) artCache.set(key, scene({book:b, kind:c.k, time:c.t, seed:b*1000 + c.n*7 + 3, storm:/சுழல்|புயல்|சுழிக்/.test(c.title), lite:opt.lite, w:opt.w, h:opt.h}));
+  return artCache.get(key);
+}
+function coverArt(b){ const a = BOOK_ART[b]; const k = 'cover' + b; if (!artCache.has(k)) artCache.set(k, scene({...a, book:b, w:600, h:900, emblem:true})); return artCache.get(k); }
+
+/* ================= content ================= */
+const BOOKS_EXTRA = {
+  1:{n:'முதல் பாகம்', line:'ஆடிப் பெருக்கு நாளில் வீரநாராயண ஏரிக்கரையில் தொடங்குகிறது ஒரு பயணம்.', blurb:'In the floods of the Tamil month of Aadi, a young warrior named Vandiyathevan rides south with a secret message for the Chola emperor, and stumbles into a conspiracy against the throne.'},
+  2:{n:'இரண்டாம் பாகம்', line:'கோடிக்கரையின் அலைகளும் ஈழத் தீவின் மர்மங்களும்.', blurb:'From the shores of Kodikkarai to the island of Lanka, Vandiyathevan crosses the sea in search of Prince Arulmozhivarman, guided by the boatwoman Poonguzhali.'},
+  3:{n:'மூன்றாம் பாகம்', line:'புயலுக்குப் பின் இருளில் கூர்மையாகும் சதி.', blurb:'A storm at sea, a prince missing, and a plot sharpening in the dark. The conspirators close in on the Chola family.'},
+  4:{n:'நான்காம் பாகம்', line:'சோழ மணிமகுடம் யாருக்கு?', blurb:'As rumours sweep through Thanjavur, the question of who will wear the Chola crown divides the court and the country.'},
+  5:{n:'ஐந்தாம் பாகம்', line:'தியாகத்தின் உச்சத்தில் நிறைவுறும் பெருங்கதை.', blurb:'Every thread of the story is drawn together in the final book, where loyalty, love and sacrifice decide the future of the empire.'}
+};
+const CAST = [
+  ['வந்தியத்தேவன்','Vandiyathevan','A witty, daring young warrior of the Vaanar clan, and the reader’s companion through the whole story.','#0d6b67'],
+  ['அருள்மொழிவர்மன்','Arulmozhivarman','The youngest Chola prince, loved by the people as Ponniyin Selvan, the son of the Kaveri.','#9c6a14'],
+  ['குந்தவை','Kundavai','The Chola princess at Pazhaiyarai: clear-sighted, learned and quietly powerful.','#7b3f6e'],
+  ['ஆதித்த கரிகாலன்','Aditha Karikalan','The crown prince, a fierce commander who holds the north from Kanchi.','#8a2f2f'],
+  ['சுந்தர சோழர்','Sundara Chozhar','The ailing emperor at Thanjavur, father of Aditha, Kundavai and Arulmozhi.','#5b4a8a'],
+  ['நந்தினி','Nandini','The enigmatic young wife of Periya Pazhuvettarayar, whose past shadows the court.','#3e2a52'],
+  ['பெரிய பழுவேட்டரையர்','Periya Pazhuvettarayar','Treasurer of the empire and a veteran of many battles, scarred and formidable.','#5c3b22'],
+  ['சின்ன பழுவேட்டரையர்','Chinna Pazhuvettarayar','His younger brother, commander of the Thanjavur fort and its guards.','#6b4a2a'],
+  ['ஆழ்வார்க்கடியான் நம்பி','Azhwarkkadiyan Nambi','A Vaishnavite devotee who turns up everywhere and knows more than he says.','#24607a'],
+  ['பூங்குழலி','Poonguzhali','The boatwoman of Kodikkarai, who rows alone and sings to the sea.','#1d5560'],
+  ['வானதி','Vanathi','A gentle princess of Kodumbalur and a companion of Kundavai.','#a3586a'],
+  ['செம்பியன் மாதேவி','Sembiyan Madevi','The devout queen mother, builder of stone temples.','#7a5a1e'],
+  ['மதுராந்தகன்','Madhuranthakan','Son of Sembiyan Madevi, whom some nobles favour for the throne.','#4b3a72'],
+  ['அநிருத்த பிரம்மராயர்','Aniruddha Brahmarayar','The emperor’s chief minister, patient and far-seeing.','#3f5a3a'],
+  ['சேந்தன் அமுதன்','Senthan Amudhan','A humble garland-maker of Thanjavur with a poet’s heart.','#2f6a4f'],
+  ['கந்தமாறன்','Kandamaran','Son of the Sambuvarayar of Kadambur and Vandiyathevan’s friend.','#6d2a2c'],
+  ['மணிமேகலை','Manimekalai','Kandamaran’s lively, warm-hearted sister.','#b0505e'],
+  ['பார்த்திபேந்திரன்','Parthibendran','A Pallava prince and Aditha Karikalan’s close companion.','#40507a']
+];
+const firstGrapheme = s => { try { const seg = new Intl.Segmenter('ta', {granularity:'grapheme'}); const it = seg.segment(s)[Symbol.iterator]().next(); return it.value ? it.value.segment : s[0]; } catch { return s.slice(0, 2); } };
+
+/* ================= state ================= */
+let M = null;
+const chapterCache = new Map();
+const prefs = Object.assign({paper:'auto', size:20, lh:1.95, font:'serif', width:'normal', justify:false}, store.get('prefs', {}));
+const progress = store.get('progress', {});      // "b-n": {p, pct, t}
+const readSet = new Set(store.get('read', []));   // "b-n"
+let bookmarks = store.get('bookmarks', []);      // {b,n,p,snip,t}
+const last = () => store.get('last', null);
+const book = b => M.books[b - 1];
+const saveProgress = () => store.set('progress', progress);
+
+/* The text ships inside this page (one gzip block per book), so it works wherever the page opens.
+   Separate data/ files are only a fallback for browsers without DecompressionStream. */
+async function loadManifest(){
+  if (M) return M;
+  const el = document.getElementById('ps-manifest');
+  if (el) { M = JSON.parse(el.textContent); return M; }
+  const r = await fetch('data/manifest.json'); M = await r.json(); return M;
+}
+const bookCache = new Map();
+function loadBook(b){
+  if (bookCache.has(b)) return bookCache.get(b);
+  const el = document.getElementById('ps-book-' + b);
+  if (!el || typeof DecompressionStream === 'undefined') return null;
+  const p = (async () => {
+    const bin = atob(el.textContent.trim()), bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+    return JSON.parse(await new Response(stream).text());
+  })();
+  bookCache.set(b, p); p.catch(() => bookCache.delete(b)); return p;
+}
+async function loadChapter(b, n){
+  const k = b + '-' + n; if (chapterCache.has(k)) return chapterCache.get(k);
+  const bp = loadBook(b);
+  const p = bp ? bp.then(d => ({book:b, n, title:book(b).chapters[n-1].title, paras:d[n]}))
+               : fetch(`data/${b}/${n}.json`).then(r => { if (!r.ok) throw new Error('missing'); return r.json(); });
+  chapterCache.set(k, p); p.catch(() => chapterCache.delete(k)); return p;
+}
+function bookPct(b){ const bk = book(b); let done = 0; for (const c of bk.chapters) if (readSet.has(b + '-' + c.n)) done++; return done / bk.chapters.length; }
+
+/* ================= routing =================
+   Plain #names only: #book-3, #read-3-12, #characters, #about */
+function parse(){
+  const h = location.hash.slice(1);
+  let m;
+  if ((m = h.match(/^read-(\d)-(\d+)$/))) return {v:'read', b:+m[1], n:+m[2]};
+  if ((m = h.match(/^book-(\d)$/))) return {v:'book', b:+m[1]};
+  if (h === 'characters' || h === 'about' || h === 'library') return {v:'home', anchor:h};
+  return {v:'home'};
+}
+const app = $('#app');
+let cleanup = null;
+async function route(){
+  await loadManifest();
+  if (cleanup){ cleanup(); cleanup = null; }
+  closePanels();
+  const r = parse();
+  if (r.v === 'read' && book(r.b) && r.n >= 1 && r.n <= book(r.b).chapters.length) return renderReader(r.b, r.n);
+  document.body.classList.remove('reading'); document.body.removeAttribute('data-paper');
+  if (r.v === 'book' && book(r.b)) { renderBook(r.b); window.scrollTo(0, 0); return; }
+  renderHome(r.anchor);
+}
+window.addEventListener('hashchange', route);
+
+function topbar(active){
+  return `<header class="topbar"><div class="wrap">
+    <a class="brand" href="#library"><b>பொன்னியின் செல்வன்</b><span class="latin">Kalki</span></a>
+    <nav><a href="#library" class="opt" ${active==='home'?'aria-current="page"':''}>நூலகம்</a><a href="#characters">கதை மாந்தர்</a><a href="#about" class="opt">பற்றி</a></nav>
+  </div></header>`;
+}
+
+/* ================= Tamil typing =================
+   tanglish(): English letters to Tamil script, the way most Tamil phone keyboards spell it
+   (nandini → நந்தினி, kaatru → காற்று, vandhiyathevan → வந்தியத்தேவன்).
+   roman()/taToLatin(): a loose sound key so different spellings still find the same title. */
+const TV = [['aa','ஆ','ா'],['ii','ஈ','ீ'],['ee','ஈ','ீ'],['uu','ஊ','ூ'],['oo','ஊ','ூ'],['ai','ஐ','ை'],['au','ஔ','ௌ'],['ae','ஏ','ே'],['oa','ஓ','ோ'],['a','அ',''],['i','இ','ி'],['u','உ','ு'],['e','எ','ெ'],['o','ஒ','ொ']];
+const TC = [['ndr','ன்ற'],['nr','ன்ற'],['ttr','ற்ற'],['tr','ற்ற'],['ng','ங'],['nj','ஞ'],['zh','ழ'],['th','த'],['dh','த'],['sh','ஷ'],['ch','ச'],['ks','க்ஷ'],['kk','க்க'],['k','க'],['g','க'],['c','ச'],['s','ச'],['j','ஜ'],['t','ட'],['d','ட'],['N','ண'],['n','ன'],['p','ப'],['b','ப'],['m','ம'],['y','ய'],['R','ற'],['r','ர'],['L','ள'],['l','ல'],['v','வ'],['w','வ'],['h','ஹ'],['f','ஃப'],['x','க்ஸ'],['q','க']];
+function tanglish(word){
+  let out = '', i = 0; const w = word, lw = word.toLowerCase();
+  while (i < w.length){
+    const rest = lw.slice(i);
+    let cons = null;
+    for (const [k, t] of TC){ const src = k.length === 1 && k !== k.toLowerCase() ? w.slice(i) : rest; if (src.startsWith(k)){ cons = [k, t]; break; } }
+    if (cons){
+      let [k, t] = cons; i += k.length;
+      if (t === 'ன'){ const nx = lw.slice(i); if (out === '' || /[^஀-௿]$/.test(out)) t = 'ந'; else if (/^(th|dh|t|d)/.test(nx)) t = 'ந'; }
+      if (t === 'ட' && /ந்$/.test(out)) t = 'த';            // ந்த, as in நந்தினி
+      if (t === 'ட' && /ன்$/.test(out)) out = out.slice(0, -2) + 'ண்'; // ண்ட
+      const vowelNext = TV.some(([k2]) => lw.startsWith(k2, i));
+      if (t === 'ங' && vowelNext) t = 'ங்க';               // ங்க, as in பூங்குழலி
+      if (t === 'ஞ' && vowelNext) t = 'ஞ்ச';
+      const v = TV.find(([k2]) => lw.startsWith(k2, i));
+      if (v){ out += t + v[2]; i += v[0].length; } else out += t + '்';
+    } else {
+      const v = TV.find(([k2]) => lw.startsWith(k2, i));
+      if (v){ out += v[1]; i += v[0].length; } else { out += w[i]; i++; }
+    }
+  }
+  return out;
+}
+const T2L = {'அ':'a','ஆ':'a','இ':'i','ஈ':'i','உ':'u','ஊ':'u','எ':'e','ஏ':'e','ஐ':'ai','ஒ':'o','ஓ':'o','ஔ':'au','ா':'a','ி':'i','ீ':'i','ு':'u','ூ':'u','ெ':'e','ே':'e','ை':'ai','ொ':'o','ோ':'o','ௌ':'au',
+  'க':'k','ங':'ng','ச':'s','ஞ':'nj','ட':'t','ண':'n','த':'th','ந':'n','ப':'p','ம':'m','ய':'y','ர':'r','ல':'l','வ':'v','ழ':'zh','ள':'l','ற':'r','ன':'n','ஜ':'j','ஷ':'sh','ஸ':'s','ஹ':'h','ஃ':'f'};
+function taToLatin(s){
+  let o = '';
+  for (let i = 0; i < s.length; i++){
+    const ch = s[i], nx = s[i + 1], m = T2L[ch];
+    if (ch === '்') continue;
+    if (m == null){ o += ch; continue; }
+    if (/[க-ஹ]/.test(ch)){ o += m; if (!(nx && /[ா-்]/.test(nx))) o += 'a'; }
+    else if (ch === '்'){ }
+    else o += m;
+  }
+  return o;
+}
+function roman(s){
+  return s.toLowerCase().replace(/[^a-z]/g, '')
+    .replace(/zh/g, 'l').replace(/ae/g, 'e').replace(/ee|ii/g, 'i').replace(/oo|uu/g, 'u').replace(/oa/g, 'o').replace(/aa/g, 'a')
+    .replace(/dh|th|d/g, 't').replace(/ch|sh|c|j/g, 's').replace(/ng|nj/g, 'n').replace(/nk/g, 'n').replace(/tr/g, 'r').replace(/g/g, 'k').replace(/b/g, 'p').replace(/w/g, 'v').replace(/f/g, 'p').replace(/h/g, '')
+    .replace(/(.)\1+/g, '$1');
+}
+
+/* ================= home ================= */
+function renderHome(anchor){
+  const L = last();
+  let resume = '';
+  if (L && book(L.b)){
+    const c = book(L.b).chapters[L.n - 1], pr = progress[L.b + '-' + L.n] || {pct:0};
+    resume = `<a class="resume" href="#read-${L.b}-${L.n}"><div class="thumb">${chapterArt(L.b, c, {lite:1, w:480, h:300})}</div>
+      <div class="meta"><small>தொடர்ந்து படிக்க · Continue reading · ${esc(book(L.b).ta)}</small><b>${c.n}. ${esc(c.title)}</b><div class="meter"><i style="width:${Math.round((pr.pct||0)*100)}%"></i></div></div>
+      <span class="btn btn-primary" aria-hidden="true">படி</span></a>`;
+  }
+  const total = M.books.reduce((a, b) => a + b.chapters.length, 0);
+  const hours = Math.round(M.books.reduce((a, b) => a + b.chapters.reduce((x, c) => x + c.min, 0), 0) / 60);
+  app.innerHTML = topbar('home') + `
+  <main class="view-enter">
+  <section class="hero"><div class="hero-art">${scene({book:1, kind:'temple', time:'dawn', seed:907, w:1600, h:760, tx:.7, right:1})}</div>
+    <div class="wrap">
+      <div class="eyebrow" style="color:#4a2f3a">கல்கி இதழில் தொடராக வெளிவந்தது<span class="latin" style="display:block;margin-top:4px;text-transform:none;letter-spacing:.02em;font-weight:400">Serialised weekly in Kalki magazine, 1950–1954</span></div>
+      <h1>பொன்னியின் செல்வன்</h1>
+      <div class="by">கல்கி கிருஷ்ணமூர்த்தி<span class="latin">Kalki R. Krishnamurthy</span></div>
+      <p class="lede">The great Tamil historical novel of the Chola empire, complete in five books: ${total} chapters, about ${hours} hours of reading, set in calm type with original illustrations for every chapter.</p>
+      <div class="actions">${L ? `<a class="btn btn-primary" href="#read-${L.b}-${L.n}">தொடர்ந்து படிக்க</a>` : `<a class="btn btn-primary" href="#read-1-1">படிக்கத் தொடங்கு · Start reading</a>`}<a class="btn btn-ghost" href="#book-1">முதல் பாகம்</a></div>
+    </div></section>
+  ${resume ? `<section class="wrap" style="padding-top:8px">${resume}</section>` : ''}
+  <section class="block wrap" id="library">
+    <div class="sec-head"><h2>ஐந்து பாகங்கள்<span class="latin">The five books</span></h2></div>
+    <div class="shelf">${M.books.map(bk => { const pct = bookPct(bk.id); return `
+      <a class="book-card" href="#book-${bk.id}">
+        <div class="cover">${coverArt(bk.id)}<div class="rule"><span>Kalki</span><span>${['I','II','III','IV','V'][bk.id-1]}</span></div>
+          <div class="ct"><div class="no">${BOOKS_EXTRA[bk.id].n}</div><div class="ta">${esc(bk.ta)}</div><div class="en">${esc(bk.en)}</div></div></div>
+        <div class="under"><span>${bk.chapters.length} அத்தியாயங்கள்</span>${pct ? `<div class="meter" title="${Math.round(pct*100)}% read"><i style="width:${Math.round(pct*100)}%"></i></div>` : `<span>${Math.round(bk.chapters.reduce((x,c)=>x+c.min,0)/60)} மணி</span>`}</div>
+      </a>`; }).join('')}</div>
+  </section>
+  <section class="block wrap" id="find">
+    <div class="sec-head"><h2>அத்தியாயம் தேடு<span class="latin">Find a chapter</span></h2>
+      <div class="search-box"><label class="search"><span class="sr" hidden>Search chapter titles</span>${ICON.search}<input id="q" type="search" placeholder="nandini → நந்தினி · அல்லது 2.14" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" lang="ta"></label>
+      <div class="ta-hint" id="taHint">ஆங்கில எழுத்துகளில் தட்டச்சு செய்தால் தமிழாக மாறும் · Type Tamil in English letters (Space converts). A Tamil keyboard works too.</div></div></div>
+    <div class="results" id="results"></div>
+  </section>
+  <section class="block wrap" id="characters">
+    <div class="sec-head"><h2>கதை மாந்தர்<span class="latin">Who’s who</span></h2></div>
+    <div class="cast">${CAST.map(([ta, en, d, col]) => `<div class="person"><div class="seal" style="background:${col}">${esc(firstGrapheme(ta))}</div><div><h3>${esc(ta)}</h3><div class="en">${esc(en)}</div><p>${esc(d)}</p></div></div>`).join('')}</div>
+  </section>
+  ${bookmarks.length ? `<section class="block wrap" id="marks"><div class="sec-head"><h2>புத்தகக்குறிகள்<span class="latin">Bookmarks</span></h2></div><div class="results">${bookmarks.slice().reverse().map(m => `<a href="#read-${m.b}-${m.n}" data-p="${m.p}"><span class="tag">${m.b}.${m.n}</span><span><b>${esc(book(m.b).chapters[m.n-1].title)}</b><br><small style="color:var(--muted)">${esc(m.snip)}…</small></span><span class="tag">${esc(book(m.b).ta)}</span></a>`).join('')}</div></section>` : ''}
+  <section class="block wrap" id="about">
+    <div class="sec-head"><h2>இந்தப் பதிப்பு பற்றி<span class="latin">About this edition</span></h2></div>
+    <div class="about"><div>
+      <p>Ponniyin Selvan was serialised by Kalki R. Krishnamurthy in the weekly <i>Kalki</i> from 1950 to 1954. The Government of Tamil Nadu nationalised Kalki’s works, so the novel is free to read and share.</p>
+      <p>The Tamil text here comes from the public-domain digital editions published by Project Madurai and Chennai Library, gathered from open text collections on GitHub. Spelling follows those editions. A few chapters at the end of the first book were reassembled from a second copy of the text, so their paragraph breaks may differ slightly from print.</p>
+      <p>The illustrations are original to this reader. Each one is drawn in code from the setting of its chapter (river, sea, temple, palace, forest or town) and the time of day, in a palette that belongs to its book.</p>
+    </div><div class="kbd"><b style="font-family:var(--f-display)">விசைப்பலகை · Keyboard</b>
+      <div><span>Previous / next chapter</span><span><kbd>←</kbd> <kbd>→</kbd></span></div>
+      <div><span>Chapters list</span><kbd>T</kbd></div><div><span>Reading settings</span><kbd>A</kbd></div>
+      <div><span>Bookmark this place</span><kbd>B</kbd></div><div><span>Close a panel</span><kbd>Esc</kbd></div>
+    </div></div>
+  </section>
+  <footer class="foot wrap">பொன்னியின் செல்வன் · கல்கி. Your reading place, finished chapters and bookmarks are saved in this browser only.</footer>
+  </main>`;
+  const q = $('#q'), res = $('#results');
+  const all = M.books.flatMap(bk => bk.chapters.map(c => ({b:bk.id, c, key:roman(taToLatin(c.title))})));
+  const hint = $('#taHint'), hintDefault = hint.innerHTML;
+  const draw = () => {
+    const raw = q.value, v = raw.trim();
+    const latin = /[a-z]/i.test(v);
+    hint.innerHTML = latin ? `தமிழில்: <b>${esc(tanglish(v))}</b> · Space or Enter converts` : hintDefault;
+    if (!v){ res.innerHTML = ''; return; }
+    let hits;
+    const m = v.match(/^(\d)\s*[.\-\/ ]\s*(\d+)$/);
+    if (m) hits = all.filter(x => x.b === +m[1] && x.c.n === +m[2]);
+    else {
+      const ta = v.replace(/[a-z]+/gi, w => tanglish(w)).trim(), key = roman(v.replace(/[஀-௿]+/g, w => taToLatin(w)));
+      hits = all.filter(x => x.c.title.includes(v) || (ta && x.c.title.includes(ta)) || (key.length > 1 && x.key.includes(key)) || String(x.c.n) === v);
+    }
+    res.innerHTML = hits.length ? hits.slice(0, 30).map(x => `<a href="#read-${x.b}-${x.c.n}"><span class="tag">${x.b}.${x.c.n}</span><b>${esc(x.c.title)}</b><span class="tag">${esc(book(x.b).ta)}</span></a>`).join('') : `<div class="empty">“${esc(latin ? tanglish(v) : v)}” என்ற தலைப்பில் அத்தியாயம் இல்லை. Try a shorter word, or a number such as 3.12.</div>`;
+  };
+  // Convert the finished English-letter word into Tamil when the reader types a space or presses Enter.
+  const commit = () => { const before = q.value; const after = before.replace(/[a-z]+(?=\s*$)/i, w => tanglish(w)); if (after !== before){ q.value = after; } };
+  q.addEventListener('input', e => { if (e.data === ' ' || /\s$/.test(q.value) && e.inputType === 'insertText'){ const v = q.value; const t = v.replace(/[a-z]+(?=\s$)/i, w => tanglish(w)); if (t !== v) q.value = t; } draw(); });
+  q.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); commit(); draw(); const first = res.querySelector('a'); if (first && !/[a-z]/i.test(q.value)) first.focus(); } });
+  q.addEventListener('blur', () => { commit(); draw(); });
+  res.addEventListener('click', e => { const a = e.target.closest('a[data-p]'); if (a) store.set('jump', +a.dataset.p); });
+  const marksEl = $('#marks'); if (marksEl) marksEl.addEventListener('click', e => { const a = e.target.closest('a[data-p]'); if (a) store.set('jump', +a.dataset.p); });
+  if (anchor && anchor !== 'library'){ const el = document.getElementById(anchor); if (el) requestAnimationFrame(() => el.scrollIntoView({block:'start'})); }
+  else if (anchor === 'library' && document.activeElement && document.activeElement.closest('nav')) { const el = $('#library'); el && el.scrollIntoView({block:'start'}); }
+  else window.scrollTo(0, 0);
+}
+
+/* ================= book page ================= */
+function renderBook(b){
+  const bk = book(b), X = BOOKS_EXTRA[b], L = last();
+  const hrs = (bk.chapters.reduce((x, c) => x + c.min, 0) / 60);
+  const lastHere = L && L.b === b ? L.n : null;
+  app.innerHTML = topbar('book') + `<main class="view-enter">
+  <section class="book-hero"><div class="bg">${chapterArt(b, {n:0, k:BOOK_ART[b].kind, t:BOOK_ART[b].time, title:''}, {w:1600, h:700})}</div>
+    <div class="wrap">
+      <div class="cover">${coverArt(b)}<div class="rule"><span>Kalki</span><span>${['I','II','III','IV','V'][b-1]}</span></div><div class="ct"><div class="no">${X.n}</div><div class="ta">${esc(bk.ta)}</div><div class="en">${esc(bk.en)}</div></div></div>
+      <div style="min-width:0">
+        <div class="book-nav">${M.books.map(x => `<a href="#book-${x.id}" ${x.id===b?'aria-current="page"':''}>${x.id} · ${esc(x.ta)}</a>`).join('')}</div>
+        <div class="eyebrow" style="margin-top:18px">${X.n} · Book ${['one','two','three','four','five'][b-1]}</div>
+        <h1>${esc(bk.ta)}</h1><div class="sub">${esc(bk.en)}</div>
+        <p class="tline">${esc(X.line)}</p>
+        <p class="blurb">${esc(X.blurb)}</p>
+        <div class="stats"><span><b>${bk.chapters.length}</b> அத்தியாயங்கள்</span><span><b>${hrs.toFixed(1)}</b> hours</span><span><b>${Math.round(bookPct(b)*100)}%</b> read</span></div>
+        <a class="btn btn-primary" href="#read-${b}-${lastHere || 1}">${lastHere ? `தொடர்க · அத்தியாயம் ${lastHere}` : 'படிக்கத் தொடங்கு · Start'}</a>
+      </div></div></section>
+  <section class="wrap"><div class="sec-head" style="margin-top:22px"><h2>அத்தியாயங்கள்<span class="latin">Chapters</span></h2></div>
+    <div class="toc">${bk.chapters.map(c => `<a href="#read-${b}-${c.n}" class="${readSet.has(b+'-'+c.n)?'done':''} ${lastHere===c.n?'current':''}"><span class="n">${c.n}</span><span class="sw">${chapterArt(b, c, {lite:1, w:320, h:200})}</span><span class="t"><b>${esc(c.title)}</b><small>${c.min} நிமிடம்</small></span></a>`).join('')}</div>
+  </section>
+  <footer class="foot wrap">${b < 5 ? `அடுத்து: <a href="#book-${b+1}">${esc(book(b+1).ta)}</a>` : 'நிறைவு பாகம் · The final book.'}</footer></main>`;
+}
+
+/* ================= reader ================= */
+const FONTS = {serif:'"Noto Serif Tamil","Latha","Tamil Sangam MN",serif', sans:'"Mukta Malar","Catamaran","Latha",sans-serif', round:'"Catamaran","Mukta Malar","Latha",sans-serif'};
+const WIDTHS = {narrow:'31em', normal:'36em', wide:'44em'};
+function applyPrefs(){
+  const s = document.documentElement.style;
+  s.setProperty('--rsize', prefs.size + 'px'); s.setProperty('--rlh', prefs.lh);
+  s.setProperty('--f-read', FONTS[prefs.font] || FONTS.serif); s.setProperty('--rwidth', WIDTHS[prefs.width] || WIDTHS.normal);
+  if (document.body.classList.contains('reading')){
+    if (prefs.paper === 'auto') document.body.removeAttribute('data-paper'); else document.body.setAttribute('data-paper', prefs.paper);
+  }
+  const pr = $('.prose'); if (pr) pr.classList.toggle('just', !!prefs.justify);
+  store.set('prefs', prefs);
+}
+function paraIndexAtTop(){
+  const ps = document.querySelectorAll('.prose p'); const y = 90;
+  for (let i = 0; i < ps.length; i++){ const r = ps[i].getBoundingClientRect(); if (r.bottom > y) return i; }
+  return ps.length - 1;
+}
+async function renderReader(b, n){
+  const bk = book(b), c = bk.chapters[n - 1];
+  document.body.classList.add('reading'); applyPrefs();
+  const key = b + '-' + n;
+  app.innerHTML = `
+  <div class="rbar" id="rbar"><div class="in">
+    <a class="icon-btn" href="#book-${b}" aria-label="Back to ${esc(bk.ta)}">${ICON.back}</a>
+    <button class="icon-btn" id="tocBtn" type="button" aria-label="Chapters (T)">${ICON.list}</button>
+    <div class="ttl"><b>${esc(c.title)}</b><small>${esc(bk.ta)} · ${n} / ${bk.chapters.length}</small></div>
+    <button class="icon-btn" id="bmBtn" type="button" aria-label="Bookmark this place (B)">${ICON.bm}</button>
+    <button class="icon-btn" id="setBtn" type="button" aria-label="Reading settings (A)">${ICON.aa}</button>
+  </div><div class="progress" id="prog"></div></div>
+  <main class="reader view-enter">
+    <div class="ch-art">${chapterArt(b, c)}</div>
+    <header class="ch-head"><div class="k">${esc(bk.ta)} · அத்தியாயம் ${n}</div><h1>${esc(c.title)}</h1><div class="m">${c.min} நிமிட வாசிப்பு · ${c.words.toLocaleString('en-IN')} சொற்கள்</div></header>
+    <div class="orn">${ORN}</div>
+    <article class="prose ${prefs.justify ? 'just' : ''}" id="prose" lang="ta"><div class="skel"><i></i><i></i><i style="width:80%"></i><i></i><i style="width:60%"></i></div></article>
+    <div class="endcard" id="endcard"></div>
+    <div class="reader-foot"></div>
+  </main>
+  ${settingsSheet()}
+  ${drawer(b, n)}`;
+  window.scrollTo(0, 0);
+  store.set('last', {b, n});
+  wireReaderChrome(b, n);
+  let data;
+  try { data = await loadChapter(b, n); }
+  catch { $('#prose').innerHTML = `<p class="empty">இந்த அத்தியாயத்தை ஏற்ற முடியவில்லை. Check your connection, then <a href="#read-${b}-${n}" onclick="location.reload()">try again</a>.</p>`; return; }
+  if (parse().v !== 'read' || parse().b !== b || parse().n !== n) return;
+  const html = data.paras.map((p, i) => {
+    if (i === 0){ const g = firstGrapheme(p); if (/[஀-௿]/.test(g)) return `<p data-i="0"><span class="dropcap" aria-hidden="true">${esc(g)}</span><span class="sr-only" hidden>${esc(g)}</span>${esc(p.slice(g.length))}</p>`; }
+    return `<p data-i="${i}">${esc(p)}</p>`;
+  }).join('');
+  // keep the first letter in the accessible text: put it back for screen readers
+  $('#prose').innerHTML = html.replace('<span class="sr-only" hidden>', '<span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">');
+  // end-of-chapter card
+  const nxt = n < bk.chapters.length ? {b, c:bk.chapters[n]} : (b < 5 ? {b:b+1, c:book(b+1).chapters[0]} : null);
+  const prv = n > 1 ? {b, c:bk.chapters[n-2]} : (b > 1 ? {b:b-1, c:book(b-1).chapters.at(-1)} : null);
+  $('#endcard').innerHTML = `<div class="orn">${ORN}</div>` + (nxt ? `<a class="next" href="#read-${nxt.b}-${nxt.c.n}"><div class="na">${chapterArt(nxt.b, nxt.c, {lite:1, w:1050, h:400})}</div><div class="nb"><small>${nxt.b !== b ? 'அடுத்த பாகம் · ' + esc(book(nxt.b).ta) : 'அடுத்த அத்தியாயம் · Next'}</small><b>${nxt.c.n}. ${esc(nxt.c.title)}</b><span style="color:var(--r-muted);font-size:.88rem">${nxt.c.min} நிமிடம்</span></div></a>`
+    : `<div class="next" style="padding:22px;text-align:center"><b style="font-family:var(--f-display);font-size:1.5rem">நிறைவு</b><p style="color:var(--r-muted);margin:.4em 0 0">You have reached the end of Ponniyin Selvan.</p></div>`)
+    + `<div class="pager">${prv ? `<a href="#read-${prv.b}-${prv.c.n}">← ${esc(prv.c.title)}</a>` : '<span></span>'}<a href="#book-${b}">${esc(bk.ta)} · அத்தியாயங்கள்</a></div>`;
+  // resume position
+  const jump = store.get('jump', null); store.set('jump', null);
+  const saved = progress[key];
+  const target = jump != null ? jump : (saved && saved.p > 0 && saved.pct < .97 ? saved.p : 0);
+  if (target > 0){
+    const el = document.querySelector(`.prose p[data-i="${target}"]`);
+    if (el){ requestAnimationFrame(() => { window.scrollTo(0, el.getBoundingClientRect().top + scrollY - 80); });
+      if (jump == null) toast('நீங்கள் விட்ட இடத்திலிருந்து · Resumed where you left off', 'தொடக்கம்', () => window.scrollTo({top:0, behavior:'smooth'})); }
+  }
+  // scroll tracking
+  const bar = $('#rbar'), prog = $('#prog'), prose = $('#prose');
+  let lastY = scrollY, ticking = false, saveT = 0;
+  const onScroll = () => {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      const y = scrollY, top = prose.offsetTop, h = prose.offsetHeight - innerHeight * .6;
+      const pct = Math.min(1, Math.max(0, (y - top + innerHeight * .4) / Math.max(1, h)));
+      prog.style.width = (pct * 100).toFixed(1) + '%';
+      if (y > 140 && y > lastY + 6) bar.classList.add('hide'); else if (y < lastY - 6 || y < 140) bar.classList.remove('hide');
+      lastY = y;
+      const now = Date.now();
+      if (now - saveT > 600){ saveT = now; const p = paraIndexAtTop(); progress[key] = {p, pct, t:now}; saveProgress();
+        if (pct > .94 && !readSet.has(key)){ readSet.add(key); store.set('read', [...readSet]); } }
+    });
+  };
+  addEventListener('scroll', onScroll, {passive:true});
+  const prevCleanup = cleanup;
+  cleanup = () => { removeEventListener('scroll', onScroll); prevCleanup && prevCleanup(); };
+  // warm the next chapter
+  if (nxt) setTimeout(() => loadChapter(nxt.b, nxt.c.n).catch(() => {}), 1500);
+}
+function settingsSheet(){
+  const seg = (name, opts) => `<div class="seg" role="group">${opts.map(([v, l]) => `<button type="button" data-set="${name}" data-v="${v}" aria-pressed="${String(prefs[name]) === String(v)}">${l}</button>`).join('')}</div>`;
+  return `<div class="sheet settings" id="settings" role="dialog" aria-label="Reading settings">
+    <div class="row"><h4>பின்னணி · Paper</h4><div class="seg" role="group">${[['auto','தானாக','var(--surface)','var(--ink)'],['day','பகல்','#fdfcf8','#1f1d1a'],['olai','ஓலை','#ecdfbd','#3a2a17'],['night','இரவு','#0e0f13','#c9c2b2']].map(([v,l,bg,fg]) => `<button type="button" class="swatch" data-set="paper" data-v="${v}" aria-pressed="${prefs.paper===v}"><i style="background:${bg};color:${fg}">அ</i><span>${l}</span></button>`).join('')}</div></div>
+    <div class="row"><h4>எழுத்தளவு · Text size</h4><div class="stepper"><button type="button" id="szDown" aria-label="Smaller text" style="font-size:.85rem">அ</button><input type="range" id="sz" min="15" max="30" step="1" value="${prefs.size}" aria-label="Text size"><button type="button" id="szUp" aria-label="Larger text" style="font-size:1.25rem">அ</button></div></div>
+    <div class="row"><h4>வரி இடைவெளி · Line spacing</h4>${seg('lh', [[1.7,'நெருக்கம்'],[1.95,'இயல்பு'],[2.25,'விரிவு']])}</div>
+    <div class="row"><h4>எழுத்துரு · Typeface</h4><div class="seg" role="group">${[['serif','நோட்டோ',FONTS.serif],['sans','முக்தா',FONTS.sans],['round','கட்டமரன்',FONTS.round]].map(([v,l,f]) => `<button type="button" data-set="font" data-v="${v}" aria-pressed="${prefs.font===v}" style="font-family:${f.replace(/"/g,"'")}">${l}</button>`).join('')}</div></div>
+    <div class="row"><h4>பக்க அகலம் · Column</h4>${seg('width', [['narrow','குறுகிய'],['normal','இயல்பு'],['wide','அகலம்']])}</div>
+    <div class="row" style="margin:0"><h4>ஒழுங்கமைவு · Alignment</h4>${seg('justify', [[false,'இடது · Left'],[true,'இருபுறம் · Justify']])}</div>
+  </div>`;
+}
+function drawer(b, n){
+  return `<aside class="sheet drawer" id="drawer" aria-label="Chapters">
+    <header><a class="icon-btn" href="#library" aria-label="Library">${ICON.home}</a><div><b id="dTitle">${esc(book(b).ta)}</b><div class="eyebrow">${BOOKS_EXTRA[b].n}</div></div><button class="icon-btn" type="button" id="dClose" aria-label="Close">${ICON.close}</button></header>
+    <div class="tabs" id="dTabs">${M.books.map(x => `<button type="button" data-b="${x.id}" aria-pressed="${x.id===b}">${x.id}</button>`).join('')}<button type="button" data-b="bm" aria-pressed="false">${'புத்தகக்குறிகள்'}</button></div>
+    <div class="list" id="dList">${drawerList(b, b, n)}</div></aside>`;
+}
+function drawerList(showB, b, n){
+  if (showB === 'bm'){
+    if (!bookmarks.length) return `<div class="empty">புத்தகக்குறிகள் இல்லை. Press the bookmark button while reading to save your place.</div>`;
+    return `<div class="bm">${bookmarks.slice().reverse().map(m => `<a href="#read-${m.b}-${m.n}" data-p="${m.p}"><span><b>${m.b}.${m.n} ${esc(book(m.b).chapters[m.n-1].title)}</b><small>${esc(m.snip)}…</small></span></a>`).join('')}</div>`;
+  }
+  return book(showB).chapters.map(c => `<a href="#read-${showB}-${c.n}" class="${showB===b && c.n===n ? 'current' : ''} ${readSet.has(showB+'-'+c.n) ? 'done' : ''}"><span class="n">${c.n}</span><b>${esc(c.title)}</b></a>`).join('');
+}
+let openPanel = null;
+function closePanels(){ document.querySelectorAll('.sheet.on').forEach(s => s.classList.remove('on')); $('#scrim').classList.remove('on'); openPanel = null; }
+function open(id){ closePanels(); const el = document.getElementById(id); if (!el) return; el.classList.add('on'); $('#scrim').classList.add('on'); openPanel = id;
+  if (id === 'drawer'){ const cur = el.querySelector('a.current'); cur && cur.scrollIntoView({block:'center'}); } }
+$('#scrim').addEventListener('click', closePanels);
+function wireReaderChrome(b, n){
+  $('#tocBtn').onclick = () => open('drawer');
+  $('#setBtn').onclick = () => openPanel === 'settings' ? closePanels() : open('settings');
+  $('#dClose').onclick = closePanels;
+  $('#dTabs').onclick = e => { const t = e.target.closest('button'); if (!t) return;
+    $('#dTabs').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === t)));
+    const v = t.dataset.b === 'bm' ? 'bm' : +t.dataset.b; $('#dList').innerHTML = drawerList(v, b, n);
+    $('#dTitle').textContent = v === 'bm' ? 'புத்தகக்குறிகள்' : book(v).ta; };
+  $('#dList').onclick = e => { const a = e.target.closest('a[data-p]'); if (a) store.set('jump', +a.dataset.p); };
+  const sheet = $('#settings');
+  sheet.onclick = e => { const t = e.target.closest('[data-set]'); if (!t) return;
+    let v = t.dataset.v; if (t.dataset.set === 'lh') v = +v; if (t.dataset.set === 'justify') v = v === 'true';
+    prefs[t.dataset.set] = v; sheet.querySelectorAll(`[data-set="${t.dataset.set}"]`).forEach(x => x.setAttribute('aria-pressed', String(x === t)));
+    keepPlace(applyPrefs); };
+  const sz = $('#sz');
+  sz.oninput = () => { prefs.size = +sz.value; keepPlace(applyPrefs); };
+  $('#szDown').onclick = () => { sz.value = Math.max(15, prefs.size - 1); sz.oninput(); };
+  $('#szUp').onclick = () => { sz.value = Math.min(30, prefs.size + 1); sz.oninput(); };
+  $('#bmBtn').onclick = () => toggleBookmark(b, n);
+  refreshBm(b, n);
+}
+function keepPlace(fn){ const i = paraIndexAtTop(), el = document.querySelector(`.prose p[data-i="${i}"]`); const off = el ? el.getBoundingClientRect().top : 0; fn(); if (el && scrollY > 200) window.scrollTo(0, el.getBoundingClientRect().top + scrollY - off); }
+function refreshBm(b, n){ const has = bookmarks.some(m => m.b === b && m.n === n); const btn = $('#bmBtn'); if (btn){ btn.innerHTML = has ? ICON.bmOn : ICON.bm; btn.style.color = has ? 'var(--r-accent)' : ''; } }
+function toggleBookmark(b, n){
+  const p = paraIndexAtTop(), el = document.querySelector(`.prose p[data-i="${p}"]`);
+  const existing = bookmarks.findIndex(m => m.b === b && m.n === n);
+  if (existing >= 0 && Math.abs(bookmarks[existing].p - p) < 2){ bookmarks.splice(existing, 1); toast('புத்தகக்குறி நீக்கப்பட்டது · Bookmark removed'); }
+  else { if (existing >= 0) bookmarks.splice(existing, 1);
+    bookmarks.push({b, n, p, snip:(el ? el.textContent : '').slice(0, 70), t:Date.now()}); toast('புத்தகக்குறி சேர்க்கப்பட்டது · Bookmarked');
+    if (el){ el.classList.add('mark'); setTimeout(() => el.classList.remove('mark'), 1600); } }
+  bookmarks = bookmarks.slice(-50); store.set('bookmarks', bookmarks); refreshBm(b, n);
+}
+let toastT = 0;
+function toast(msg, action, fn){
+  const t = $('#toast'), btn = $('#toastBtn'); $('#toastMsg').textContent = msg;
+  if (action){ btn.hidden = false; btn.textContent = action; btn.onclick = () => { fn(); t.classList.remove('on'); }; } else btn.hidden = true;
+  t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), action ? 6000 : 2200);
+}
+addEventListener('keydown', e => {
+  if (e.target.matches('input,textarea') || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === 'Escape'){ closePanels(); return; }
+  const r = parse(); if (r.v !== 'read') return;
+  const bk = book(r.b);
+  if (e.key === 'ArrowRight'){ if (r.n < bk.chapters.length) location.hash = `read-${r.b}-${r.n+1}`; else if (r.b < 5) location.hash = `read-${r.b+1}-1`; }
+  else if (e.key === 'ArrowLeft'){ if (r.n > 1) location.hash = `read-${r.b}-${r.n-1}`; else if (r.b > 1) location.hash = `read-${r.b-1}-${book(r.b-1).chapters.length}`; }
+  else if (e.key === 't' || e.key === 'T') openPanel === 'drawer' ? closePanels() : open('drawer');
+  else if (e.key === 'a' || e.key === 'A') openPanel === 'settings' ? closePanels() : open('settings');
+  else if (e.key === 'b' || e.key === 'B') toggleBookmark(r.b, r.n);
+});
+route().catch(err => { app.innerHTML = `<div class="loading">The library could not load (${esc(err && err.message || err)}). Reload the page to try again.</div>`; console.error(err); });
+})();
+</script>
